@@ -237,7 +237,7 @@ void ui_update_window(Window* window, bool active) {
     int y = window->y + 3;
     bool mouse_in_close_button = mouse.x >= x && mouse.x < x + WINDOW_CLOSE_BUTTON_WIDTH && mouse.y >= y && mouse.y < y + WINDOW_CLOSE_BUTTON_HEIGHT;
 
-    if (active && mouse_left_clicked() && mouse_in_close_button) {
+    if (active && mouse_in_close_button && mouse_left_clicked()) {
         window->close_requested = true;
         return;
     }

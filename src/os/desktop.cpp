@@ -29,7 +29,10 @@ static void desktop_draw_icon(const App* app, int index) {
     bool hovered = mouse.x >= x && mouse.x < x + DESKTOP_ICON_WIDTH && mouse.y >= y && mouse.y < y + DESKTOP_ICON_HEIGHT;
     uint32_t background_color = hovered && !ui_mouse_over_window(mouse.x, mouse.y) ? 0x60606060 : 0x00000000;
     graphics_rectangle(x, y, DESKTOP_ICON_WIDTH, DESKTOP_ICON_HEIGHT, background_color);
-    graphics_rectangle(x + 20, y + 10, 40, 40, 0xFF808080);
+    int icon_width = 40;
+    int icon_height = 40;
+    int icon_x = x + (DESKTOP_ICON_WIDTH - icon_width) / 2;
+    graphics_rectangle(icon_x, y + 10, 40, 40, 0xFF808080);
     const int max_char_per_line = 6;
     const char* name = app->name;
     char line1[max_char_per_line + 1];
@@ -84,10 +87,6 @@ void desktop_update() {
         return;
     }
 
-    if (!mouse_left_clicked()) {
-        return;
-    }
-
     int count = app_count();
 
     for (int i = 0; i < count; i++) {
@@ -97,6 +96,10 @@ void desktop_update() {
 
         if (!hovered) {
             continue;
+        }
+
+        if (!mouse_left_clicked()) {
+            return;
         }
 
         if (last_clicked_app == i && double_click_timer > 0) {
