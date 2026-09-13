@@ -2,7 +2,7 @@
 
 #include <stdarg.h>
 
-#define LOG_MAX_LINES 10000000
+#define LOG_MAX_LINES 10000
 #define LOG_LINE_LENGTH 180
 
 static char log_lines[LOG_MAX_LINES][LOG_LINE_LENGTH];
@@ -60,8 +60,48 @@ void kernel_log(const char* text, ...) {
                     break;
                 }
 
-                log_lines[log_line_count][output_position] = number_buffer[i];
-                output_position++;
+                log_lines[log_line_count][output_position++] = number_buffer[i];
+            }
+        }
+        if (text[text_position] == 'x') {
+            uint32_t number = va_arg(args, uint32_t);
+            char hex_buffer[8];
+            int hex_length = 0;
+
+            if (output_position < LOG_LINE_LENGTH - 1) {
+                log_lines[log_line_count][output_position++] = '0';
+            }
+
+            if (output_position < LOG_LINE_LENGTH - 1) {
+                log_lines[log_line_count][output_position++] = 'x';
+            }
+
+            if (number == 0) {
+                if (output_position < LOG_LINE_LENGTH - 1) {
+                    log_lines[log_line_count][output_position++] = '0';
+                }
+            }
+            else{
+                while (number > 0 && hex_length < 8) {
+                    uint32_t digit = number & 0xF;
+
+                    if (digit < 10) {
+                        hex_buffer[hex_length++] = '0' + digit;
+                    }
+                    else {
+                        hex_buffer[hex_length++] = 'a' + (digit - 10);
+                    }
+
+                    number >>= 4;
+                }
+            }
+
+            for (int i = hex_length - 1; i >= 0; i--) {
+                if (output_position >= LOG_LINE_LENGTH - 1) {
+                    break;
+                }
+
+                log_lines[log_line_count][output_position++] = hex_buffer[i];
             }
         }
         else if (text[text_position] == 'd') {
@@ -105,13 +145,11 @@ void kernel_log(const char* text, ...) {
                     break;
                 }
 
-                log_lines[log_line_count][output_position] = string[i];
-                output_position++;
+                log_lines[log_line_count][output_position++] = string[i];
             }
         }
         else if (text[text_position] == '%') {
-            log_lines[log_line_count][output_position] = '%';
-            output_position++;
+            log_lines[log_line_count][output_position++] = '%';
         }
 
         text_position++;

@@ -1,8 +1,6 @@
 #ifndef DISKMANAGER_H
 #define DISKMANAGER_H
 
-namespace diskmanager {
-    void init();
-}
+namespace diskmanager {}
 
 #endif // DISKMANAGER_H

@@ -1,8 +1,6 @@
 #ifndef TEXTEDITOR_H
 #define TEXTEDITOR_H
 
-namespace texteditor {
-    void init();
-}
+namespace texteditor {}
 
 #endif // TEXTEDITOR_H

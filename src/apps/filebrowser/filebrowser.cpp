@@ -9,7 +9,6 @@
 #include "../../kernel/core/log.h"
 
 namespace filebrowser {
-    static Window window;
     static Filesystem* current_filesystem = nullptr;
     static FilesystemEntry entries[64];
     static uint32_t entry_count = 0;
@@ -215,9 +214,9 @@ namespace filebrowser {
         }
     }
 
-    void init() {
-        window = ui_create_window(60, 60, 800, 450, "Filebrowser", 0xFF000000, 0xFF808080, 0xFFFFFFFF, nullptr, draw_content);
-        ui_register_window(&window);
+    Window* init() {
+        Window* window = ui_create_window(60, 60, 800, 450, "Filebrowser", 0xFF000000, 0xFF808080, 0xFFFFFFFF, nullptr, draw_content);
+        return window;
     }
 }
 

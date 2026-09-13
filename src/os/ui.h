@@ -1,6 +1,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "app.h"
+
 #include <stdint.h>
 
 struct Window;
@@ -28,13 +30,19 @@ struct Window {
     WindowUpdateCallback update_content;
     WindowDrawCallback draw_content;
     Scrollbar scrollbar;
+    const App* app;
+    bool close_requested;
 };
 
 bool graphics_button(int x, int y, int width, int height, uint32_t color, const char* text, uint32_t text_color);
 
-Window ui_create_window(int x, int y, int width, int height, const char* title,uint32_t background_color, uint32_t title_bar_color, uint32_t title_color, WindowUpdateCallback update_content, WindowDrawCallback draw_content);
+Window* ui_create_window(int x, int y, int width, int height, const char* title,uint32_t background_color, uint32_t title_bar_color, uint32_t title_color, WindowUpdateCallback update_content, WindowDrawCallback draw_content);
+
+Window* ui_launch_app(const App* app);
 
 void ui_register_window(Window* window);
+
+bool ui_mouse_over_window(int mouse_x, int mouse_y);
 
 void ui_update_windows();
 

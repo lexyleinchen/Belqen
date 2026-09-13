@@ -5,8 +5,9 @@
 #include "../../os/font.h"
 
 namepsace texteditor {
-    void init() {
-
+    Window* init() {
+        Window* window = ui_create_window(60, 60, 800, 450, "Texteditor", 0xFF000000, 0xFF808080, 0xFFFFFFFF, nullptr, nullptr);
+        return window;
     }
 }
 

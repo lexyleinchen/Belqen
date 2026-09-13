@@ -2,6 +2,7 @@
 #include "../usb/usb.h"
 #include "../ahci/ahci.h"
 #include "../ide/ide.h"
+#include "../ethernet/e1000/e1000.h"
 #include "../../core/log.h"
 
 #define PCI_CONFIG_ADDRESS 0xCF8
@@ -29,7 +30,7 @@ void pci_config_write32(uint8_t bus, uint8_t slot, uint8_t function, uint8_t off
     outl(PCI_CONFIG_DATA, value);
 }
 
-static uint16_t pci_config_read16(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset) {
+uint16_t pci_config_read16(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset) {
     uint32_t value = pci_config_read32(bus, slot, function, offset);
     if (offset & 2) {
         return (uint16_t)(value >> 16);
@@ -38,7 +39,7 @@ static uint16_t pci_config_read16(uint8_t bus, uint8_t slot, uint8_t function, u
     }
 }
 
-static uint8_t pci_config_read8(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset) {
+uint8_t pci_config_read8(uint8_t bus, uint8_t slot, uint8_t function, uint8_t offset) {
     uint32_t value = pci_config_read32(bus, slot, function, offset);
     return (uint8_t)(value >> ((offset & 3) * 8));
 }
@@ -88,6 +89,10 @@ static void pci_scan(void) {
                     ide_controller_found(bus, slot, function, prog_if);
                 }
 
+                if (class_code == 0x02 && subclass == 0x00) {
+                    e1000_controller_found(bus, slot, function);
+                }
+
                 device_count++;
             }
         }
@@ -113,4 +118,13 @@ void pci_init(void) {
     kernel_log("initializing pci...");
     pci_scan();
     kernel_log("pci started.");
+}
+
+void pci_enable_bus_mastering(uint8_t bus, uint8_t slot, uint8_t function) {
+    uint16_t command = pci_config_read16(bus, slot, function, 0x04);
+    command |= 0x0004;
+    uint32_t value = pci_config_read32(bus, slot, function, 0x04);
+    value &= 0xFFFF0000;
+    value |= command;
+    pci_config_write32(bus, slot, function, 0x04, value);
 }

@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 typedef struct Framebuffer {
-    uint32_t* address; 
+    uintptr_t address; 
     uint32_t width; 
     uint32_t height; 
     uint32_t pitch;

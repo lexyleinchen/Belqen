@@ -1,8 +1,6 @@
 #ifndef FILEBROWSER_H
 #define FILEBROWSER_H
 
-namespace filebrowser {
-    void init();
-}
+namespace filebrowser {}
 
 #endif // FILEBROWSER_H

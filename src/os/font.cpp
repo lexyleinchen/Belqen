@@ -237,7 +237,7 @@ static const uint8_t font_2[5] = {
     0b01100,
     0b10010,
     0b00100,
-    0b11000,
+    0b01000,
     0b11111
 };
 
@@ -266,7 +266,7 @@ static const uint8_t font_5[5] = {
 };
 
 static const uint8_t font_6[5] = {
-    0b11110,
+    0b01110,
     0b10000,
     0b11110,
     0b10001,
@@ -294,7 +294,7 @@ static const uint8_t font_9[5] = {
     0b10001,
     0b01111,
     0b00001,
-    0b01111
+    0b01110
 };
 
 static const uint8_t font_space[5] = {

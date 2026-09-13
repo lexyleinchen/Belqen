@@ -42,7 +42,7 @@ void multiboot_init(uint32_t address) {
         if (tag->type == MULTIBOOT_TAG_TYPE_FRAMEBUFFER) {
             MultibootTagFramebuffer* framebuffer_tag = (MultibootTagFramebuffer*)tag;
             Framebuffer framebuffer;
-            framebuffer.address = (uint32_t*)framebuffer_tag->framebuffer_addr;
+            framebuffer.address = (uintptr_t)framebuffer_tag->framebuffer_addr;
             framebuffer.width = framebuffer_tag->framebuffer_width;
             framebuffer.height = framebuffer_tag->framebuffer_height;
             framebuffer.pitch = framebuffer_tag->framebuffer_pitch;

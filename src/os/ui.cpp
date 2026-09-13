@@ -5,6 +5,8 @@
 #include "../kernel/inputs/mouse.h"
 
 #define WINDOW_TITLE_BAR_HEIGHT 26
+#define WINDOW_CLOSE_BUTTON_WIDTH 24
+#define WINDOW_CLOSE_BUTTON_HEIGHT 20
 #define WINDOW_BORDER_SIZE 1
 #define MAX_WINDOWS 32
 #define SCROLLBAR_MIN_HEIGHT 20
@@ -12,6 +14,8 @@
 static Window* windows[MAX_WINDOWS];
 static int window_count;
 static Window* focused_window = nullptr;
+static Window window_pool[MAX_WINDOWS];
+static bool window_used[MAX_WINDOWS];
 
 bool graphics_button(int x, int y, int width, int height, uint32_t color, const char* text, uint32_t text_color) {
     MouseState mouse;
@@ -38,23 +42,54 @@ bool graphics_button(int x, int y, int width, int height, uint32_t color, const 
     return hoverd && mouse_left_clicked();
 }
 
-Window ui_create_window(int x, int y, int width, int height, const char* title,uint32_t background_color, uint32_t title_bar_color, uint32_t title_color, WindowUpdateCallback update_content, WindowDrawCallback draw_content) {
-    Window window;
-    window.x = x;
-    window.y = y;
-    window.width = width;
-    window.height = height;
-    window.title = title;
-    window.dragging = false;
-    window.drag_offset_x = 0;
-    window.drag_offset_y = 0;
-    window.scrollbar.dragging = false;
-    window.scrollbar.drag_offset = 0;
-    window.background_color = background_color;
-    window.title_bar_color = title_bar_color;
-    window.title_color = title_color;
-    window.update_content = update_content;
-    window.draw_content = draw_content;
+static Window* ui_alloc_window() {
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        if (!window_used[i]) {
+            window_used[i] = true;
+            return &window_pool[i];
+        }
+    }
+
+    return nullptr;
+}
+
+static void ui_free_window(Window* window) {
+    if (window == nullptr) {
+        return;
+    }
+
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        if (&window_pool[i] == window) {
+            window_used[i] = false;
+            return;
+        }
+    }
+}
+
+Window* ui_create_window(int x, int y, int width, int height, const char* title,uint32_t background_color, uint32_t title_bar_color, uint32_t title_color, WindowUpdateCallback update_content, WindowDrawCallback draw_content) {
+    Window* window = ui_alloc_window();
+
+    if (window == nullptr) {
+        return nullptr;
+    }
+
+    window->x = x;
+    window->y = y;
+    window->width = width;
+    window->height = height;
+    window->title = title;
+    window->dragging = false;
+    window->drag_offset_x = 0;
+    window->drag_offset_y = 0;
+    window->scrollbar.dragging = false;
+    window->scrollbar.drag_offset = 0;
+    window->background_color = background_color;
+    window->title_bar_color = title_bar_color;
+    window->title_color = title_color;
+    window->update_content = update_content;
+    window->draw_content = draw_content;
+    window->app = nullptr;
+    window->close_requested = false;
     return window;
 }
 
@@ -77,6 +112,20 @@ static Window* ui_get_window_at(int mouse_x, int mouse_y) {
 
         if (mouse_x >= window->x && mouse_x < window->x + window->width && mouse_y >= window->y && mouse_y < window->y + window->height) {
             return window;
+        }
+    }
+
+    return nullptr;
+}
+
+bool ui_mouse_over_window(int mouse_x, int mouse_y) {
+    return ui_get_window_at(mouse_x, mouse_y) != nullptr;
+}
+
+static Window* ui_find_app(const App* app) {
+    for (int i = 0; i < window_count; i++) {
+        if (windows[i] != nullptr && windows[i]->app == app) {
+            return windows[i];
         }
     }
 
@@ -108,6 +157,75 @@ static void ui_bring_to_front(Window* window) {
     windows[window_count - 1] = window;
 }
 
+static void ui_focus_window(Window* window) {
+    if (window == nullptr) {
+        return;
+    }
+
+    ui_bring_to_front(window);
+    focused_window = window;
+}
+
+Window* ui_launch_app(const App* app) {
+    if (app == nullptr || app->init == nullptr) {
+        return nullptr;
+    }
+
+    Window* existing = ui_find_app(app);
+
+    if (existing != nullptr) {
+        ui_focus_window(existing);
+        return existing;
+    }
+
+    Window* window = app->init();
+
+    if (window == nullptr) {
+        return nullptr;
+    }
+
+    window->app = app;
+    ui_register_window(window);
+    ui_focus_window(window);
+    return window;
+}
+
+static void ui_remove_window(Window* window) {
+    if (window == nullptr) {
+        return;
+    }
+
+    int index = -1;
+
+    for (int i = 0; i < window_count; i++) {
+        if (windows[i] == window) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1) {
+        return;
+    }
+
+    for (int i = index; i < window_count - 1; i++) {
+        windows[i] = windows[i + 1];
+    }
+
+    windows[window_count - 1] = nullptr;
+    window_count--;
+
+    if (focused_window == window) {
+        focused_window = nullptr;
+
+        if (window_count > 0) {
+            focused_window = windows[window_count - 1];
+        }
+    }
+
+    ui_free_window(window);
+}
+
 void ui_update_window(Window* window, bool active) {
     if (window == nullptr) {
         return;
@@ -115,11 +233,20 @@ void ui_update_window(Window* window, bool active) {
 
     MouseState mouse;
     mouse_get_state(&mouse);
+    int x = window->x + window->width - WINDOW_CLOSE_BUTTON_WIDTH - 2;
+    int y = window->y + 3;
+    bool mouse_in_close_button = mouse.x >= x && mouse.x < x + WINDOW_CLOSE_BUTTON_WIDTH && mouse.y >= y && mouse.y < y + WINDOW_CLOSE_BUTTON_HEIGHT;
+
+    if (active && mouse_left_clicked() && mouse_in_close_button) {
+        window->close_requested = true;
+        return;
+    }
+
     bool mouse_left_down = mouse_left_pressed();
     bool mouse_in_title_bar = mouse.x >= window->x && mouse.x < window->x + window->width && mouse.y >= window->y && mouse.y < window->y + WINDOW_TITLE_BAR_HEIGHT;
 
     if (active) {
-        if (!window->dragging && mouse_left_down && mouse_in_title_bar) {
+        if (!window->dragging && mouse_left_down && mouse_in_title_bar && !mouse_in_close_button) {
             window->dragging = true;
             window->drag_offset_x = mouse.x - window->x;
             window->drag_offset_y = mouse.y - window->y;
@@ -196,6 +323,14 @@ void ui_update_windows() {
             window->update_content(window);
         }
     }
+
+    for (int i = window_count - 1; i >= 0; i--) {
+        Window* window = windows[i];
+
+        if (window != nullptr && window->close_requested) {
+            ui_remove_window(window);
+        }
+    }
 }
 
 void ui_draw_window(Window* window) {
@@ -209,6 +344,11 @@ void ui_draw_window(Window* window) {
     if (window->title != nullptr) {
         font_draw_text(window->x + 10, window->y + 8, window->title, window->title_color);
     }
+
+    int close_x = window->x + window->width - WINDOW_CLOSE_BUTTON_WIDTH - 3;
+    int close_y = window->y + 3;
+    graphics_rectangle(close_x, close_y, WINDOW_CLOSE_BUTTON_WIDTH, WINDOW_CLOSE_BUTTON_HEIGHT, 0xFFC04040);
+    font_draw_text(close_x + 7, close_y + 5, "X", 0xFFFFFFFF);
 }
 
 void ui_draw_windows() {

@@ -27,7 +27,7 @@ void keyboard_update(uint8_t scancode) {
         return;
     }
 
-    kernel_log("keyboard scancode %u", (uint32_t)scancode);
+    kernel_log("keyboard scancode %x", scancode);
 
     if (keyboard_callback) {
         keyboard_callback(scancode);

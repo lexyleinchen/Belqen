@@ -1,7 +1,9 @@
 #ifndef APP_H
 #define APP_H
 
-typedef void (*AppInitFunc)();
+struct Window;
+
+typedef Window* (*AppInitFunc)();
 
 struct App {
     const char* name;

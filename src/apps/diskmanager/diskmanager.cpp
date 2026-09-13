@@ -312,9 +312,9 @@ namespace diskmanager {
         }
     } 
 
-    void init() {
-        window = ui_create_window(110, 110, 800, 450, "Diskmanager", 0xFF000000, 0xFF808080, 0xFFFFFFFF, update_content, draw_content);
-        ui_register_window(&window);
+    Window* init() {
+        Window* window = ui_create_window(60, 60, 800, 450, "Diskmanager", 0xFF000000, 0xFF808080, 0xFFFFFFFF, update_content, draw_content);
+        return window;
     }
 }
 

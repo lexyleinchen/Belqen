@@ -18,6 +18,7 @@ CFLAGS = -ffreestanding \
 CXXFLAGS = -ffreestanding \
 	-fno-stack-protector \
 	-fno-rtti \
+	-fno-exceptions \
 	-fno-pie \
 	-mno-red-zone \
 	-Wall \
@@ -74,6 +75,30 @@ build/usb.o: src/kernel/drivers/usb/usb.c | build
 build/ahci.o: src/kernel/drivers/ahci/ahci.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
+build/ethernet.o: src/kernel/drivers/ethernet/ethernet.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/e1000.o: src/kernel/drivers/ethernet/e1000/e1000.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/arp.o: src/kernel/network/arp/arp.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/ipv4.o: src/kernel/network/ipv4/ipv4.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/ipv6.o: src/kernel/network/ipv6/ipv6.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/icmp.o: src/kernel/network/icmp/icmp.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/udp.o: src/kernel/network/udp/udp.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/dhcp.o: src/kernel/network/dhcp/dhcp.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
 build/ide.o: src/kernel/drivers/ide/ide.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -96,6 +121,9 @@ build/ui.o: src/os/ui.cpp | build
 	$(CXX) $(CXXFLAGS) -Isrc/os -c $< -o $@
 
 build/font.o: src/os/font.cpp | build
+	$(CXX) $(CXXFLAGS) -Isrc/os -c $< -o $@
+
+build/desktop.o: src/os/desktop.cpp | build
 	$(CXX) $(CXXFLAGS) -Isrc/os -c $< -o $@
 
 build/taskbar.o: src/os/taskbar.cpp | build
@@ -123,6 +151,14 @@ $(KERNEL): build/boot.o \
 		build/pci.o \
 		build/usb.o \
 		build/ahci.o \
+		build/ethernet.o \
+		build/e1000.o \
+		build/arp.o \
+		build/ipv4.o \
+		build/ipv6.o \
+		build/icmp.o \
+		build/udp.o \
+		build/dhcp.o \
 		build/ide.o \
 		build/keyboard.o \
 		build/mouse.o \
@@ -130,6 +166,7 @@ $(KERNEL): build/boot.o \
 		build/graphics.o \
 		build/ui.o \
 		build/font.o \
+		build/desktop.o \
 		build/taskbar.o \
 		build/os_mouse.o \
 		$(APP_OBJECTS)

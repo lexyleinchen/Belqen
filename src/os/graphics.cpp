@@ -40,14 +40,38 @@ void graphics_rectangle(int x, int y, int width, int height, uint32_t color) {
         return;
     }
 
+    uint8_t alpha = (color >> 24) & 0xFF;
+    uint8_t red = (color >> 16) & 0xFF;
+    uint8_t green = (color >> 8) & 0xFF;
+    uint8_t blue = color & 0xFF;
+
     for (int yy = 0; yy < height; yy++) {
         for (int xx = 0; xx < width; xx++) {
             int px = x + xx;
             int py = y + yy;
 
-            if (px >= 0 && px < static_cast<int>(graphics.width) && py >= 0 && py < static_cast<int>(graphics.height)) {
-                backbuffer[py * BACKBUFFER_WIDTH + px] = color;
+            if (px < 0 || px >= static_cast<int>(graphics.width) || py < 0 || py >= static_cast<int>(graphics.height)) {
+                continue;
             }
+
+            uint32_t& destination = backbuffer[py * BACKBUFFER_WIDTH + px];
+            
+            if (alpha == 255) {
+                destination = color;
+                continue;
+            }
+
+            if (alpha == 0) {
+                continue;
+            }
+
+            uint8_t dst_red = (destination >> 16) & 0xFF;
+            uint8_t dst_green = (destination >> 8) & 0xFF;
+            uint8_t dst_blue = destination & 0xFF;
+            uint8_t out_red = (red * alpha + dst_red * (255 - alpha)) / 255;
+            uint8_t out_green = (green * alpha + dst_green * (255 - alpha)) / 255;
+            uint8_t out_blue = (blue * alpha + dst_blue * (255 - alpha)) / 255;
+            destination = (0xFF << 24) | (out_red << 16) | (out_green << 8) | out_blue;
         }
     }
 }

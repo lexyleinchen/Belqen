@@ -1,10 +1,6 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-namespace terminal {
-    void init();
-
-    void write(const char* text);
-}
+namespace terminal {}
 
 #endif // TERMINAL_H

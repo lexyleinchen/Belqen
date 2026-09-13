@@ -27,4 +27,4 @@ int ps2_keyboard_data_available(void);
 }
 #endif
 
-#endif
+#endif // PS2_H
