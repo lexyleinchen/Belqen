@@ -28,6 +28,7 @@ The project currently includes work on areas such as:
 * IDE/storage support
 * USB subsystem
 * Work/task scheduling system
+* App icons on desktop
 
 PrintOS is an ongoing project and is intended primarily for experimentation, learning, and development.
 
