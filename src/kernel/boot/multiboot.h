@@ -9,6 +9,8 @@ extern "C" {
 
 void multiboot_init(uint32_t address);
 
+const void* multiboot_get_rsdp(void);
+
 #ifdef __cplusplus
 }
 #endif

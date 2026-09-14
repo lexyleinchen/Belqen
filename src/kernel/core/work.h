@@ -19,6 +19,7 @@ struct KernelWork {
     uint8_t active;
     uint8_t finished;
     uint32_t id;
+    uint64_t wake_tick;
 };
 
 typedef struct {
@@ -28,6 +29,8 @@ typedef struct {
 void work_init(void);
 
 int work_submit(KernelWorkStep step, void* data);
+
+int work_submit_delayed(KernelWorkStep step, void* data, uint64_t delay_ms);
 
 void work_update(void);
 

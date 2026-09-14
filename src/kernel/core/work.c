@@ -1,4 +1,5 @@
 #include "work.h"
+#include "../interrupts/interrupts.h"
 #include "log.h"
 
 static KernelWork works[MAX_KERNEL_WORK];
@@ -26,6 +27,7 @@ void work_init(void) {
         works[i].step = 0;
         works[i].data = 0;
         works[i].id = 0;
+        works[i].wake_tick = 0;
     }
 
     next_work_id = 1;
@@ -44,6 +46,7 @@ int work_submit(KernelWorkStep step, void* data) {
             works[i].active = 1;
             works[i].finished = 0;
             works[i].id = next_work_id++;
+            works[i].wake_tick = timer_get_ticks();
 
             if (next_work_id == 0) {
                 next_work_id = 1;
@@ -57,9 +60,33 @@ int work_submit(KernelWorkStep step, void* data) {
     return 0;
 }
 
+int work_submit_delayed(KernelWorkStep step, void* data, uint64_t delay_ms) {
+    int work_id = work_submit(step, data);
+
+    if (!work_id) {
+        return 0;
+    }
+
+    uint64_t delay_ticks = (delay_ms + 9) / 10;
+    uint64_t wake_tick = timer_get_ticks() + delay_ticks;
+
+    for (uint32_t i = 0; i < MAX_KERNEL_WORK; i++) {
+        if (works[i].id == (uint32_t)work_id) {
+            works[i].wake_tick = wake_tick;
+            break;
+        }
+    }
+
+    return work_id;
+}
+
 void work_update(void) {
     for (uint32_t i = 0; i < MAX_KERNEL_WORK; i++) {
         if (!works[i].active) {
+            continue;
+        }
+
+        if (timer_get_ticks() < works[i].wake_tick) {
             continue;
         }
 

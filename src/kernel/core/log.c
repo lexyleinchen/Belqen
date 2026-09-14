@@ -1,4 +1,6 @@
 #include "log.h"
+#include "../framebuffer/framebuffer_console.h"
+#include "../drivers/serial/serial.h"
 
 #include <stdarg.h>
 
@@ -7,6 +9,7 @@
 
 static char log_lines[LOG_MAX_LINES][LOG_LINE_LENGTH];
 static int log_line_count = 0;
+static int console_initialized = 0;
 
 void log_init(void) {
     log_line_count = 0;
@@ -156,8 +159,23 @@ void kernel_log(const char* text, ...) {
     }
 
     va_end(args);
+
+    if (console_initialized && output_position > 0) {
+        framebuffer_console_print(log_lines[log_line_count]);
+        framebuffer_console_print("\n");
+    }
+
     log_lines[log_line_count][output_position] = '\0';
     log_line_count++;
+}
+
+void log_init_console(void) {
+    framebuffer_console_init();
+    console_initialized = 1;
+}
+
+void log_disable_console(void) {
+    console_initialized = 0;
 }
 
 int log_count(void) {
@@ -174,4 +192,15 @@ const char* log_get_line(int index) {
     else {
         return log_lines[index];
     }
+}
+
+void log_dump_serial(void) {
+    serial_write_string("==== KERNEL LOG DUMP START ====\n");
+
+    for (int i = 0; i < log_line_count; i++) {
+        serial_write_string(log_lines[i]);
+        serial_write_string("\n");
+    }
+
+    serial_write_string("==== KERNEL LOG DUMP END ====\n");
 }

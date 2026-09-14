@@ -9,8 +9,6 @@ extern "C" {
 
 void ps2_init(void);
 
-void ps2_poll(void);
-
 int ps2_mouse_write(uint8_t value);
 
 int ps2_mouse_read(uint8_t* value);

@@ -48,20 +48,25 @@ namespace logs {
         }
 
         int y = text_y;
+        int right_edge = content_x + content_width - 10;
+        int bottom_edge = content_y + content_height;
         
-        for (int i = 0; i < max_lines; i++) {
-            int index = scroll_line + i;
-
-            if (index >= count) {
+        for (int i = scroll_line; i < count; i++) {
+            if (y + 16 > bottom_edge) {
                 break;
             }
 
-            const char* text = log_get_line(index);
+            const char* text = log_get_line(i);
             int x = text_x;
             
             while (*text != '\0') {
-                if (x + 10 >= content_x + content_width - 10) {
-                    break;
+                if (x + 10 >= right_edge) {
+                    x = text_x;
+                    y += 16;
+
+                    if (y + 16 > bottom_edge) {
+                        break;
+                    }
                 }
 
                 font_draw_char(x, y, *text, 0xFFFFFFFF);

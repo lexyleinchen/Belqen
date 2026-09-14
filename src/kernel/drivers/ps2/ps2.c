@@ -1,6 +1,7 @@
 #include "ps2.h"
 #include "../../inputs/keyboard.h"
 #include "../../inputs/mouse.h"
+#include "../../interrupts/interrupts.h"
 #include "../../core/log.h"
 
 #define PS2_DATA_PORT 0x60
@@ -166,7 +167,7 @@ static int ps2_controller_init(void) {
     }
 
     config &= ~(PS2_CONFIG_MOUSE_IRQ);
-    config &= ~(PS2_CONFIG_KEYBOARD_IRQ);
+    config |= PS2_CONFIG_KEYBOARD_IRQ;
     config &= ~(PS2_CONFIG_KEYBOARD_TRANSLATION);
 
     if (!ps2_write_config(config)) {
@@ -190,7 +191,7 @@ static int ps2_controller_init(void) {
     }
 
     config &= ~PS2_CONFIG_MOUSE_CLOCK;
-    config &= ~PS2_CONFIG_MOUSE_IRQ;
+    config |= PS2_CONFIG_MOUSE_IRQ;
 
     if (!ps2_write_config(config)) {
         kernel_log("ps2 failed to enable mouse clock.");
@@ -218,10 +219,10 @@ void ps2_init(void) {
         return;
     }
 
-    kernel_log("ps2 initialized.");
-}
+    interrupt_register_irq(1, ps2_keyboard_interrupt);
+    interrupt_unmask_irq(1);
+    interrupt_register_irq(12, ps2_mouse_interrupt);
+    interrupt_unmask_irq(12);
 
-void ps2_poll(void) {
-    ps2_keyboard_poll();
-    ps2_mouse_poll();
+    kernel_log("ps2 initialized.");
 }

@@ -21,7 +21,7 @@ void mouse_get_state(MouseState* state);
 
 int ps2_mouse_init(void);
 
-void ps2_mouse_poll(void);
+void ps2_mouse_interrupt(void);
 
 int mouse_left_clicked(void);
 

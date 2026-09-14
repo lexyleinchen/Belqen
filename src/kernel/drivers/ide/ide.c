@@ -1,5 +1,7 @@
 #include "ide.h"
 #include "../../storage/block.h"
+#include "../../interrupts/interrupts.h"
+#include "../../interrupts/apic.h"
 #include "../../core/log.h"
 
 #define IDE_PRIMARY_IO 0x1F0
@@ -30,6 +32,8 @@ static uint32_t ide_sector_count = 0;
 static uint16_t ide_io_base = IDE_PRIMARY_IO;
 static uint16_t ide_control_base = IDE_PRIMARY_CONTROL;
 static BlockDevice ide_block_device;
+static volatile uint32_t ide_operation_complete = 0;
+static volatile uint32_t ide_operation_error = 0;
 
 static void outb(uint16_t port, uint8_t value) {
     __asm__ volatile ("outb %0, %1" : : "a"(value), "Nd"(port));
@@ -110,6 +114,32 @@ static int ide_identify(void) {
     return 1;
 }
 
+static int ide_wait_for_interrupt(void) {
+    uint32_t timeout = 20000;
+    kernel_log("Waiting for ide interrupt...");
+
+    while (!ide_operation_complete && timeout > 0) {
+        __asm__ volatile ("hlt");
+        uint32_t irr = apic_read_register(0x200 + ((46 / 32) * 0x10));
+        //kernel_log("Lapic irr word %x (vector46 bit %u)", irr, (irr >> (46 % 32)) & 1);
+        timeout--;
+    }
+
+    kernel_log("Ide wait timeout remaining %u complete %u", timeout, ide_operation_complete);
+
+    if (!ide_operation_complete) {
+        kernel_log("Ide interrupt timeout.");
+        return 0;
+    }
+
+    if (ide_operation_error) {
+        kernel_log("Ide operation failed.");
+        return 0;
+    }
+
+    return 1;
+}
+
 static int ide_read(BlockDevice* device, uint64_t lba, uint32_t count, void* buffer) {
     if (!ide_disk_present) {
         return 0;
@@ -143,29 +173,19 @@ static int ide_read(BlockDevice* device, uint64_t lba, uint32_t count, void* buf
         outb(ide_io_base + ATA_REG_LBA0, current_lba & 0xFF);
         outb(ide_io_base + ATA_REG_LBA1, (current_lba >> 8) & 0xFF);
         outb(ide_io_base + ATA_REG_LBA2, (current_lba >> 16) & 0xFF);
+        ide_operation_complete = 0;
+        ide_operation_error = 0;
+        apic_dump_redirection(14);
         outb(ide_io_base + ATA_REG_COMMAND, ATA_CMD_READ_PIO);
-        int timout = 1000000;
 
-        while (timout-- > 0) {
-            status = inb(ide_io_base + ATA_REG_STATUS);
-
-            if (status & ATA_STATUS_ERR) {
-                kernel_log("ide read error.");
-                return 0;
-            }
-
-            if (status & ATA_STATUS_DF) {
-                kernel_log("ide read device fault.");
-                return 0;
-            }
-
-            if (status & ATA_STATUS_DRQ) {
-                break;
-            }
+        if (!ide_wait_for_interrupt()) {
+            return 0;
         }
 
-        if (timout <= 0) {
-            kernel_log("ide read timeout.");
+        status = inb(ide_io_base + ATA_REG_STATUS);
+
+        if (!(status & ATA_STATUS_DRQ)) {
+            kernel_log("Ide read data no ready.");
             return 0;
         }
 
@@ -222,55 +242,17 @@ static int ide_write(BlockDevice* device, uint64_t lba, uint32_t count, const vo
         outb(ide_io_base + ATA_REG_LBA0, current_lba & 0xFF);
         outb(ide_io_base + ATA_REG_LBA1, (current_lba >> 8) & 0xFF);
         outb(ide_io_base + ATA_REG_LBA2, (current_lba >> 16) & 0xFF);
+        ide_operation_complete = 0;
+        ide_operation_error = 0;
         outb(ide_io_base + ATA_REG_COMMAND, ATA_CMD_WRITE_PIO);
-        timeout = 1000000;
-
-        while (timeout-- > 0) {
-            status = inb(ide_io_base + ATA_REG_STATUS);
-
-            if (status & ATA_STATUS_ERR) {
-                kernel_log("ide write error.");
-                return 0;
-            }
-
-            if (status & ATA_STATUS_DF) {
-                kernel_log("ide drive fault during write");
-                return 0;
-            }
-
-            if (status & ATA_STATUS_DRQ) {
-                break;
-            }
-        }
-
-        if (timeout <= 0) {
-            kernel_log("ide write timeout.");
-            return 0;
-        }
 
         for (uint32_t i = 0; i < 256; i++) {
             uint32_t offset = sector * IDE_SECTOR_SIZE + i * 2;
             uint16_t word = (uint16_t)source[offset] | ((uint16_t)source[offset + 1] << 8);
             outw(ide_io_base +ATA_REG_DATA, word);
-        }
-
-        timeout = 1000000;
-
-        while (timeout-- > 0) {
-            status = inb(ide_io_base + ATA_REG_STATUS);
-
-            if (status & ATA_STATUS_ERR) {
-                kernel_log("ide write failed.");
-                return 0;
-            }
-
-            if (!(status & ATA_STATUS_BSY)) {
-                break;
-            }
-        }
-
-        if (timeout <= 0) {
-            kernel_log("ide write completion timeout.");
+        } 
+        
+        if (!ide_wait_for_interrupt()) {
             return 0;
         }
     }
@@ -355,6 +337,23 @@ void ide_init(void) {
     ide_block_device.write = ide_write;
     ide_block_device.driver_data = 0;
     block_register_device(&ide_block_device);
-
     kernel_log("ide initialized.");
+}
+
+void ide_enable_interrupts(void) {
+    outb(ide_control_base, 0x00);
+    interrupt_register_irq(14, ide_interrupt);
+    interrupt_unmask_irq(14);
+    kernel_log("ide interrupts enabled.");
+}
+
+void ide_interrupt(void) {
+    kernel_log("Ide interrupt fired.");
+    uint8_t status = inb(ide_io_base + ATA_REG_STATUS);
+
+    if (status & (ATA_STATUS_ERR | ATA_STATUS_DF)) {
+        ide_operation_error = 1;
+    }
+
+    ide_operation_complete = 1;
 }

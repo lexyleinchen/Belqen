@@ -1,6 +1,8 @@
 #include "e1000.h"
 #include "../ethernet.h"
 #include "../../pci/pci.h"
+#include "../../../interrupts/interrupts.h"
+#include "../../../interrupts/apic.h"
 #include "../../../core/log.h"
 
 #define E1000_VENDOR_ID 0x8086
@@ -22,6 +24,8 @@
 #define E1000_REG_TDT 0x3818
 #define E1000_REG_TCTL 0x0400
 #define E1000_REG_TIPG 0x0410
+#define E1000_REG_ICR 0x00C0
+#define E1000_REG_IMS 0x00D0
 #define E1000_RX_DESC_COUNT 32
 #define E1000_RX_STATUS_DD (1u << 0)
 #define E1000_RX_STATUS_EOP (1u << 1)
@@ -33,6 +37,9 @@
 #define E1000_PACKET_SIZE 2048
 #define E1000_CONTROL_RST (1u << 26)
 #define E1000_CONTROL_SLU (1u << 6)
+#define E1000_INTERRUPT_RXDW (1u << 7)
+#define E1000_INTERRUPT_RXT0 (1u << 7)
+#define E1000_INTERRUPT_TXDW (1u << 0)
 #define PCI_BAR_IO_SPACE 0x1
 #define PCI_BAR_MEM_MASK 0xFFFFFFF0
 
@@ -59,6 +66,9 @@ static volatile uint32_t* e1000_regs = 0;
 static uint32_t e1000_tx_index = 0;
 static uint32_t e1000_rx_index = 0;
 static uint8_t e1000_mac[6];
+static volatile uint8_t e1000_rx_pending = 0;
+static volatile uint8_t e1000_tx_pending = 0;
+static uint8_t e1000_irq = 0xFF;
 
 static struct e1000_rx_desc
     rx_descriptors[E1000_RX_DESC_COUNT]
@@ -230,18 +240,56 @@ static int e1000_receive(uint8_t* buffer, uint16_t buffer_size) {
 
 void e1000_poll(void) {
     uint8_t packet[E1000_PACKET_SIZE];
-    int length = e1000_receive(packet, sizeof(packet));
+    int length;
+
+    if (e1000_tx_pending) {
+        e1000_tx_pending = 0;
+
+        for (uint32_t i = 0; i < E1000_TX_DESC_COUNT; i++) {
+            if (tx_descriptors[i].status & E1000_TX_STATUS_DD) {
+                tx_descriptors[i].command = 0;
+            }
+        }
+    }
     
-    if (length <= 0) {
+    if (!e1000_rx_pending) {
         return;
     }
 
-    if (length < ETHERNET_HEADER_SIZE) {
-        kernel_log("E1000 recived invalid ethernet frame.");
+    e1000_rx_pending = 0;
+
+    while (1) {
+        length = e1000_receive(packet, sizeof(packet));
+
+        if (length <= 0) {
+            break;
+        }
+
+        if (length < ETHERNET_HEADER_SIZE) {
+            kernel_log("E1000 received invalid ethernet frame.");
+            continue;
+        }
+
+        ethernet_receive(packet, (uint16_t)length);
+    }
+}
+
+void e1000_interrupt(void) {
+    uint32_t causes;
+
+    if (!e1000_regs) {
         return;
     }
 
-    ethernet_receive(packet, (uint16_t)length);
+    causes = e1000_read(E1000_REG_ICR);
+
+    if (causes & E1000_INTERRUPT_RXT0) {
+        e1000_rx_pending = 1;
+    }
+
+    if (causes & E1000_INTERRUPT_TXDW) {
+        e1000_tx_pending = 1;
+    }
 }
 
 void e1000_get_mac(uint8_t mac[6]) {
@@ -290,5 +338,31 @@ void e1000_controller_found(uint8_t bus, uint8_t slot, uint8_t function) {
     e1000_read_mac(e1000_mac);
     kernel_log("E1000 mac %x:%x:%x:%x:%x:%x", e1000_mac[0], e1000_mac[1], e1000_mac[2], e1000_mac[3], e1000_mac[4], e1000_mac[5]);
     e1000_init();
+    e1000_irq = pci_config_read8(bus, slot, function, 0x3C);
+    kernel_log("E1000 irq line %u", (uint32_t)e1000_irq);
+
+    if (e1000_irq != 0xFF && e1000_irq < 16) {
+        if (apic_is_available() && apic_has_ioapic()) {
+            uint8_t vector = 48 + (e1000_irq & 0x0F);
+            apic_route_irq(e1000_irq, vector);
+            kernel_log("E1000 irq %u routed to vector %u via ioapic", (uint32_t)e1000_irq, (uint32_t)vector);
+            interrupt_register_vector(vector, e1000_interrupt);
+        }
+        else {
+            interrupt_register_irq(e1000_irq, e1000_interrupt);
+        }
+
+        if (!apic_is_available() || !apic_has_ioapic()) {
+            interrupt_unmask_irq(e1000_irq);
+
+            if (e1000_irq >= 8) {
+                interrupt_unmask_irq(2);
+            }
+        }
+
+        kernel_log("E1000 interrupts registered on irq %u", (uint32_t)e1000_irq);
+    }
+
+    e1000_write(E1000_REG_IMS, E1000_INTERRUPT_RXT0 | E1000_INTERRUPT_TXDW);
     kernel_log("E1000 initialization complete.");
 }

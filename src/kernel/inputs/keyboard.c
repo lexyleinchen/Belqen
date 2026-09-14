@@ -7,10 +7,14 @@
 #define PS2_KEYBOARD_RESET 0xFF
 #define PS2_KEYBOARD_SET_DEFAULTS 0xF6
 #define PS2_KEYBOARD_ENABLE 0xF4
+#define KEYBOARD_BUFFER_SIZE 64
 
 static KeyboardKeyCallback keyboard_callback = 0;
+static volatile uint8_t keyboard_buffer[KEYBOARD_BUFFER_SIZE];
+static volatile uint8_t keyboard_buffer_head = 0;
+static volatile uint8_t keyboard_buffer_tail = 0;
 
-void ps2_keyboard_poll(void) {
+void ps2_keyboard_interrupt(void) {
     while (ps2_keyboard_data_available()) {
         uint8_t scancode;
 
@@ -18,9 +22,24 @@ void ps2_keyboard_poll(void) {
             break;
         }
 
-        keyboard_update(scancode);
+        uint8_t next_head = (uint8_t)((keyboard_buffer_head + 1) % KEYBOARD_BUFFER_SIZE);
+
+        if (next_head == keyboard_buffer_tail) {
+            continue;
+        }
+
+        keyboard_buffer[keyboard_buffer_head] = scancode;
+        keyboard_buffer_head = next_head;
     }
 }
+
+void keyboard_process(void) {
+    while (keyboard_buffer_tail != keyboard_buffer_head) {
+        uint8_t scancode = keyboard_buffer[keyboard_buffer_tail];
+        keyboard_buffer_tail = (uint8_t)((keyboard_buffer_tail + 1) % KEYBOARD_BUFFER_SIZE);
+        keyboard_update(scancode);
+    }
+} 
 
 void keyboard_update(uint8_t scancode) {
     if (scancode & 0x80) {

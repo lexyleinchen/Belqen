@@ -149,7 +149,7 @@ static void ps2_mouse_process_packet(void) {
     mouse_update(dx, dy, buttons);
 }
 
-void ps2_mouse_poll(void) {
+void ps2_mouse_interrupt(void) {
     while (ps2_mouse_data_available()) {
         uint8_t data;
 

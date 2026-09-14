@@ -10,6 +10,7 @@ APP_OBJECTS := $(patsubst src/%.cpp,build/%.o,$(APP_SOURCES))
 
 CFLAGS = -ffreestanding \
 	-fno-stack-protector \
+	-fno-omit-frame-pointer \
 	-fno-pie \
 	-mno-red-zone \
 	-Wall \
@@ -17,6 +18,7 @@ CFLAGS = -ffreestanding \
 
 CXXFLAGS = -ffreestanding \
 	-fno-stack-protector \
+	-fno-omit-frame-pointer \
 	-fno-rtti \
 	-fno-exceptions \
 	-fno-pie \
@@ -36,6 +38,15 @@ build:
 build/kernel.o: src/kernel/kernel.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -Isrc/os -c $< -o $@
 
+build/interrupts.o: src/kernel/interrupts/interrupts.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/interrupts_asm.o: src/kernel/interrupts/interrupts.asm | build
+	$(AS) -f elf64 $< -o $@
+
+build/apic.o: src/kernel/interrupts/apic.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
 build/log.o: src/kernel/core/log.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -43,6 +54,9 @@ build/work.o: src/kernel/core/work.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/framebuffer.o: src/kernel/framebuffer/framebuffer.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/framebuffer_console.o: src/kernel/framebuffer/framebuffer_console.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/block.o: src/kernel/storage/block.c | build
@@ -79,6 +93,9 @@ build/ethernet.o: src/kernel/drivers/ethernet/ethernet.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/e1000.o: src/kernel/drivers/ethernet/e1000/e1000.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/serial.o: src/kernel/drivers/serial/serial.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/arp.o: src/kernel/network/arp/arp.c | build
@@ -138,9 +155,13 @@ build/%.o: src/%.cpp
 
 $(KERNEL): build/boot.o \
 		build/kernel.o \
+		build/interrupts.o \
+		build/interrupts_asm.o \
+		build/apic.o \
 		build/log.o \
 		build/work.o \
 		build/framebuffer.o \
+		build/framebuffer_console.o \
 		build/block.o \
 		build/storage.o \
 		build/partition.o \
@@ -153,6 +174,7 @@ $(KERNEL): build/boot.o \
 		build/ahci.o \
 		build/ethernet.o \
 		build/e1000.o \
+		build/serial.o \
 		build/arp.o \
 		build/ipv4.o \
 		build/ipv6.o \

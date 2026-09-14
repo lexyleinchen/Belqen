@@ -20,6 +20,7 @@ The project currently includes work on areas such as:
 * Desktop and taskbar
 * Terminal functionality
 * Application system and app registry
+* App icons on desktop
 * Window/UI system
 * Memory and system management
 * Low-level C/C++ development
@@ -28,7 +29,8 @@ The project currently includes work on areas such as:
 * IDE/storage support
 * USB subsystem
 * Work/task scheduling system
-* App icons on desktop
+* Networking using arp/ipv4 and ipv6
+* Interrupt and exception handling
 
 PrintOS is an ongoing project and is intended primarily for experimentation, learning, and development.
 

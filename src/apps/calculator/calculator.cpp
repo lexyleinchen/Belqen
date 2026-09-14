@@ -6,7 +6,7 @@
 
 namespace calculator {
     Window* init() {
-        Window* window = ui_create_window(60, 60, 800, 450, "Calculator", 0xFF000000, 0xFF808080, 0xFFFFFFFF, nullptr, nullptr);
+        Window* window = ui_create_window(60, 60, 800, 450, "Calculator", 0x50FF0000, 0xFF808080, 0xFFFFFFFF, nullptr, nullptr);
         return window;
     }
 }

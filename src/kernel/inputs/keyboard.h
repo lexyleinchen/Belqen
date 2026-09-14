@@ -11,7 +11,9 @@ typedef void (*KeyboardKeyCallback)(uint8_t scancode);
 
 int ps2_keyboard_init(void);
 
-void ps2_keyboard_poll(void);
+void ps2_keyboard_interrupt(void);
+
+void keyboard_process(void);
 
 void keyboard_update(uint8_t scancode);
 
