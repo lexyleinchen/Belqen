@@ -12,6 +12,13 @@ header_start:
     dd header_end - header_start
     dd -(0xE85250D6 + 0 + (header_end - header_start))
 
+    ; Memory map request
+    dw 1
+    dw 0
+    dd 16
+    dd 6
+    dd 0
+
     ; Framebuffer request
     dw 5
     dw 0

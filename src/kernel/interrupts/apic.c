@@ -478,5 +478,5 @@ void apic_timer_init(uint32_t hz) {
 
 void apic_dump_redirection(uint32_t gsi) {
     uint32_t reg = IOAPIC_REDIRECTION0 + (gsi * 2);
-    kernel_log("Gsi %u redir low %x high %x", gsi, ioapic_read(reg), ioapic_read(reg + 1));
+    //kernel_log("Gsi %u redir low %x high %x", gsi, ioapic_read(reg), ioapic_read(reg + 1));
 }

@@ -5,6 +5,10 @@
 #include "boot/multiboot.h"
 #include "interrupts/interrupts.h"
 #include "interrupts/apic.h"
+#include "memory/pmm.h"
+#include "memory/vmm.h"
+#include "memory/heap.h"
+#include "memory/address_space.h"
 #include "framebuffer/framebuffer.h"
 #include "drivers/pci/pci.h"
 #include "drivers/usb/usb.h"
@@ -30,8 +34,14 @@ void kernel_main(uint32_t multiboot_address) {
     kernel_log("PrintOS Kernel Starting...");
     multiboot_init(multiboot_address);
     log_init_console();
+    pmm_init(multiboot_get_address());
+    vmm_init();
+    vmm_test();
+    heap_init();
+    heap_test();
     apic_init();
     interrupts_init();
+    address_space_test();
     apic_timer_init(1000);
     work_init();
     pci_init();

@@ -47,6 +47,21 @@ build/interrupts_asm.o: src/kernel/interrupts/interrupts.asm | build
 build/apic.o: src/kernel/interrupts/apic.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
+build/pmm.o: src/kernel/memory/pmm.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/vmm.o: src/kernel/memory/vmm.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/heap.o: src/kernel/memory/heap.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/malloc.o: src/kernel/memory/malloc.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/address_space.o: src/kernel/memory/address_space.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
 build/log.o: src/kernel/core/log.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -158,6 +173,11 @@ $(KERNEL): build/boot.o \
 		build/interrupts.o \
 		build/interrupts_asm.o \
 		build/apic.o \
+		build/pmm.o \
+		build/vmm.o \
+		build/heap.o \
+		build/malloc.o \
+		build/address_space.o \
 		build/log.o \
 		build/work.o \
 		build/framebuffer.o \

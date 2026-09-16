@@ -32,10 +32,12 @@ typedef struct MultibootTagFramebuffer {
 
 static uint8_t multiboot_rsdp_data[36];
 static const void* multiboot_rsdp = 0;
+static uint32_t multiboot_address;
 
 void multiboot_init(uint32_t address) {
     kernel_log("initializing multiboot...");
-    uint32_t current = address + 8; // Skip the total size and reserved fields
+    uint32_t current = address + 8;
+    multiboot_address = address;
 
     while (1) {
         MultibootTag* tag = (MultibootTag*)(uintptr_t)current;
@@ -82,4 +84,8 @@ void multiboot_init(uint32_t address) {
 
 const void* multiboot_get_rsdp(void) {
     return multiboot_rsdp;
+}
+
+uint32_t multiboot_get_address(void) {
+    return multiboot_address;
 }

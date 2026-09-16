@@ -115,17 +115,13 @@ static int ide_identify(void) {
 }
 
 static int ide_wait_for_interrupt(void) {
-    uint32_t timeout = 20000;
-    kernel_log("Waiting for ide interrupt...");
+    uint32_t timeout = 1000000;
 
     while (!ide_operation_complete && timeout > 0) {
         __asm__ volatile ("hlt");
         uint32_t irr = apic_read_register(0x200 + ((46 / 32) * 0x10));
-        //kernel_log("Lapic irr word %x (vector46 bit %u)", irr, (irr >> (46 % 32)) & 1);
         timeout--;
     }
-
-    kernel_log("Ide wait timeout remaining %u complete %u", timeout, ide_operation_complete);
 
     if (!ide_operation_complete) {
         kernel_log("Ide interrupt timeout.");
@@ -348,7 +344,6 @@ void ide_enable_interrupts(void) {
 }
 
 void ide_interrupt(void) {
-    kernel_log("Ide interrupt fired.");
     uint8_t status = inb(ide_io_base + ATA_REG_STATUS);
 
     if (status & (ATA_STATUS_ERR | ATA_STATUS_DF)) {

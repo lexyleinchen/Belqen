@@ -1,6 +1,7 @@
 #include "interrupts.h"
 #include "apic.h"
 #include "../inputs/keyboard.h"
+#include "../memory/vmm.h"
 #include "../core/log.h"
 
 #define IDT_ENTRY_COUNT 256
@@ -297,7 +298,7 @@ static void exception_print_registers(InterruptFrame* frame) {
 static void exception_divide_by_zero(InterruptFrame* frame) {
     kernel_log("Divide by zero at rip %x", (uint32_t)(frame->rip & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Divide by zero error");
+    kernel_panic("divide by zero error");
 }
 
 static void exception_debug(InterruptFrame* frame) {
@@ -307,7 +308,7 @@ static void exception_debug(InterruptFrame* frame) {
 static void exception_nmi(InterruptFrame* frame) {
     kernel_log("Non-maskable interrupt");
     exception_print_registers(frame);
-    kernel_panic("Nmi received");
+    kernel_panic("nmi received");
 }
 
 static void exception_breakpoint(InterruptFrame* frame) {
@@ -317,57 +318,57 @@ static void exception_breakpoint(InterruptFrame* frame) {
 static void exception_overflow(InterruptFrame* frame) {
     kernel_log("Overflow exception at rip %x", (uint32_t)(frame->rip & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Overflow error");
+    kernel_panic("overflow error");
 }
 
 static void exception_bound_range(InterruptFrame* frame) {
     kernel_log("Bound range exceeded at rip %x", (uint32_t)(frame->rip & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Bound range exceeded");
+    kernel_panic("bound range exceeded");
 }
 
 static void exception_invalid_opcode(InterruptFrame* frame) {
     kernel_log("Invalid opcode at rip %x", (uint32_t)(frame->rip & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Invalid opcode");
+    kernel_panic("invalid opcode");
 }
 
 static void exception_device_not_available(InterruptFrame* frame) {
     kernel_log("Device not available (fpu?)");
-    kernel_panic("Device not available");
+    kernel_panic("device not available");
 }
 
 static void exception_double_fault(InterruptFrame* frame) {
     kernel_log("DOUBLE FAULT - CRITICAL!");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Double fault");
+    kernel_panic("double fault");
 }
 
 static void exception_coprocessor_overrun(InterruptFrame* frame) {
     kernel_log("Coprocessor segment overrun.");
-    kernel_panic("Coprocessor overrun");
+    kernel_panic("coprocessor overrun");
 }
 
 static void exception_invalid_tss(InterruptFrame* frame) {
     kernel_log("Invalid tss.");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Invalid tss");
+    kernel_panic("invalid tss");
 }
 
 static void exception_segment_not_present(InterruptFrame* frame) {
     kernel_log("Segment not present.");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Segment not present");
+    kernel_panic("segment not present");
 }
 
 static void exception_stack_fault(InterruptFrame* frame) {
     kernel_log("Stack segment fault.");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Stack segment fault");
+    kernel_panic("stack segment fault");
 }
 
 static void exception_general_protection_fault(InterruptFrame* frame) {
@@ -377,7 +378,7 @@ static void exception_general_protection_fault(InterruptFrame* frame) {
     uint64_t ext = (frame->error_code >> 16) & 0x1;
     kernel_log("selector %x | external %x", (uint32_t)selector, (uint32_t)ext);
     exception_print_registers(frame);
-    kernel_panic("General protection fault");
+    kernel_panic("general protection fault");
 }
 
 static void exception_page_fault(InterruptFrame* frame) {
@@ -395,10 +396,14 @@ static void exception_page_fault(InterruptFrame* frame) {
         type = "user-mode";
     }
 
+    if (vmm_handle_page_fault(fault_address, error_code)) {
+        return;
+    }
+
     kernel_log("Page fault at address %x (type %s)", (uint32_t)(fault_address & 0xFFFFFFFF), type);
     kernel_log("Error code %x | rip %x", (uint32_t)(error_code & 0xFFFFFFFF), (uint32_t)(frame->rip & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Page fault");
+    kernel_panic("unrecoverable page fault");
 }
 
 static void exception_x87_fpu(InterruptFrame* frame) {
@@ -410,30 +415,30 @@ static void exception_alignment_check(InterruptFrame* frame) {
     kernel_log("Alignment check exception.");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Alignment check");
+    kernel_panic("alignment check");
 }
 
 static void exception_machine_check(InterruptFrame* frame) {
     kernel_log("MACHINE CHECK - HARDWARE ERROR!");
     exception_print_registers(frame);
-    kernel_panic("Machine check exception");
+    kernel_panic("machine check exception");
 }
 
 static void exception_simd_fpu(InterruptFrame* frame) {
     kernel_log("Simd fpu exception.");
-    kernel_panic("Simd fpu exception");
+    kernel_panic("simd fpu exception");
 }
 
 static void exception_virtualization(InterruptFrame* frame) {
     kernel_log("Virtualization exception.");
-    kernel_panic("Virtualization exception");
+    kernel_panic("virtualization exception");
 }
 
 static void exception_control_protection(InterruptFrame* frame) {
     kernel_log("Control protection exception.");
     kernel_log("Error code %x", (uint32_t)(frame->error_code & 0xFFFFFFFF));
     exception_print_registers(frame);
-    kernel_panic("Control protection exception");
+    kernel_panic("control protection exception");
 }
 
 void interrupts_init(void) {
@@ -484,7 +489,7 @@ void interrupts_init(void) {
 
 void interrupt_dispatch(InterruptFrame* frame) {
     if (!frame) {
-        kernel_panic("Interrupt frame was null.");
+        kernel_panic("interrupt frame was null.");
     }
 
     if (frame->vector < 32) {
