@@ -1,4 +1,4 @@
-# PRINTOS CUSTOM NON-COMMERCIAL LICENSE (PCNCL)
+# BELQEN CUSTOM NON-COMMERCIAL LICENSE (BCNCL)
 
 ## Version 1.0
 
@@ -10,7 +10,7 @@ Copyright (c) 2026 lexyleinchen
 
 This is a custom license and is not an OSI-approved open-source license.
 
-It is intentionally restrictive and is provided specifically for the PrintOS project.
+It is intentionally restrictive and is provided specifically for the Belqen project.
 
 By obtaining, copying, modifying, using, distributing, or creating a Derivative Work from the Software, you agree to the terms of this license.
 
@@ -18,13 +18,13 @@ By obtaining, copying, modifying, using, distributing, or creating a Derivative 
 
 ## 1. DEFINITIONS
 
-**"Software"** means the PrintOS kernel, PrintOS operating system components, source code, binaries, build files, documentation, assets, and other material included in this repository that is owned by the Author.
+**"Software"** means the Belqen project, including the Belqen-kernel, Belqen-os, source code, binaries, build files, documentation, assets, and other material included in this repository that is owned by the Author.
 
 **"Author"** means lexyleinchen, the original creator and copyright holder of the Software.
 
 **"Derivative Work"** means any modification, adaptation, port, extension, integration, fork, or other work that incorporates, contains, or is substantially based on any part of the Software.
 
-A work does not become a Derivative Work merely because it communicates with, runs alongside, or independently interacts with PrintOS without incorporating Software code.
+A work does not become a Derivative Work merely because it communicates with, runs alongside, or independently interacts with Belqen without incorporating Software code.
 
 **"Written Permission"** means explicit permission provided by the Author in a physical written document personally signed by the Author.
 
@@ -50,7 +50,7 @@ The credit must identify:
 
 **Author: lexyleinchen**
 
-and must identify the work as using, incorporating, or being based on PrintOS and/or its kernel where applicable.
+and must identify the work as using, incorporating, or being based on Belqne, Belqne-kernel and/or Belqen-os where applicable.
 
 Credit must not be removed, hidden, altered to mislead others, or falsely attributed.
 
@@ -101,7 +101,7 @@ You may study, modify, fork, extend, port, and create Derivative Works from the 
 Every Derivative Work must:
 
 * remain subject to this license;
-* be distributed under the PCNCL;
+* be distributed under the BCNCL;
 * include a complete copy of this license;
 * retain all original copyright notices;
 * provide clear and visible credit to the Author;
@@ -182,7 +182,7 @@ Any redistribution or fork must:
 * include this license in its entirety;
 * retain all original copyright notices;
 * provide clear and visible credit to lexyleinchen;
-* remain subject to the PCNCL;
+* remain subject to the BCNCL;
 * comply with the Artificial Intelligence Prohibition;
 * remain non-commercial; and
 * not grant rights broader than those granted by this license.
@@ -199,7 +199,7 @@ Any product, operating system, kernel, application, service, software project, o
 
 Such Derivative Works must:
 
-* remain under the PCNCL;
+* remain under the BCNCL;
 * provide credit to lexyleinchen;
 * remain non-commercial;
 * contain no AI-generated code;
