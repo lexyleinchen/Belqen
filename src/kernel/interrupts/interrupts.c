@@ -2,6 +2,7 @@
 #include "apic.h"
 #include "../inputs/keyboard.h"
 #include "../memory/vmm.h"
+#include "../core/scheduler.h"
 #include "../core/log.h"
 
 #define IDT_ENTRY_COUNT 256
@@ -282,11 +283,14 @@ static void pit_init(void) {
 
 static void timer_interrupt_handler(void) {
     timer_ticks++;
+    pic_send_end_of_interrupt(32);
+    scheduler_tick();
 }
 
 static void apic_timer_interrupt_handler(void) {
     timer_ticks++;
     apic_send_end_of_interrupt();
+    scheduler_tick();
 }
 
 static void exception_print_registers(InterruptFrame* frame) {
@@ -589,7 +593,7 @@ void interrupt_dispatch(InterruptFrame* frame) {
         if (apic_is_initialized()) {
             apic_send_end_of_interrupt();
         }
-        else {
+        else if (irq != 0) {
             pic_send_end_of_interrupt(frame->vector);
         }
     }

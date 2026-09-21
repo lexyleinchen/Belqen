@@ -1,0 +1,188 @@
+Date : 2026-09-21 21:54:12
+Directory : /mnt/HDD 500GB/Coding/Belqen
+Total : 111 files,  10693 codes, 15 comments, 2824 blanks, all 13532 lines
+
+Languages
++-------------------------+------------+------------+------------+------------+------------+
+| language                | files      | code       | comment    | blank      | total      |
++-------------------------+------------+------------+------------+------------+------------+
+| C                       |         39 |      7,251 |          1 |      1,745 |      8,997 |
+| C++                     |         65 |      2,803 |          7 |        864 |      3,674 |
+| x86 and x86_64 Assembly |          3 |        280 |          7 |         65 |        352 |
+| Makefile                |          1 |        186 |          0 |         61 |        247 |
+| Markdown                |          1 |        135 |          0 |         80 |        215 |
+| LinkerScript            |          1 |         34 |          0 |          9 |         43 |
+| Properties              |          1 |          4 |          0 |          0 |          4 |
++-------------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                               | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                  |        111 |     10,693 |         15 |      2,824 |     13,532 |
+| . (Files)                                                                          |          2 |        321 |          0 |        141 |        462 |
+| iso                                                                                |          1 |          4 |          0 |          0 |          4 |
+| iso/boot                                                                           |          1 |          4 |          0 |          0 |          4 |
+| iso/boot/grub                                                                      |          1 |          4 |          0 |          0 |          4 |
+| src                                                                                |        108 |     10,368 |         15 |      2,683 |     13,066 |
+| src (Files)                                                                        |          1 |         34 |          0 |          9 |         43 |
+| src/apps                                                                           |         12 |        607 |          1 |        159 |        767 |
+| src/apps/calculator                                                                |          2 |         15 |          0 |          5 |         20 |
+| src/apps/diskmanager                                                               |          2 |        268 |          0 |         59 |        327 |
+| src/apps/filebrowser                                                               |          2 |        181 |          1 |         47 |        229 |
+| src/apps/logs                                                                      |          2 |        113 |          0 |         37 |        150 |
+| src/apps/terminal                                                                  |          2 |         15 |          0 |          6 |         21 |
+| src/apps/texteditor                                                                |          2 |         15 |          0 |          5 |         20 |
+| src/boot                                                                           |          1 |        112 |          5 |         42 |        159 |
+| src/kernel                                                                         |         78 |      8,305 |          3 |      2,167 |     10,475 |
+| src/kernel (Files)                                                                 |          1 |         78 |          0 |          4 |         82 |
+| src/kernel/boot                                                                    |          2 |         87 |          0 |         24 |        111 |
+| src/kernel/core                                                                    |         13 |      1,055 |          2 |        281 |      1,338 |
+| src/kernel/drivers                                                                 |         16 |      1,922 |          0 |        462 |      2,384 |
+| src/kernel/drivers/ahci                                                            |          2 |         59 |          0 |         11 |         70 |
+| src/kernel/drivers/ethernet                                                        |          4 |        426 |          0 |         98 |        524 |
+| src/kernel/drivers/ethernet (Files)                                                |          2 |        105 |          0 |         27 |        132 |
+| src/kernel/drivers/ethernet/e1000                                                  |          2 |        321 |          0 |         71 |        392 |
+| src/kernel/drivers/ide                                                             |          2 |        302 |          0 |         73 |        375 |
+| src/kernel/drivers/pci                                                             |          2 |        136 |          0 |         33 |        169 |
+| src/kernel/drivers/ps2                                                             |          2 |        197 |          0 |         59 |        256 |
+| src/kernel/drivers/serial                                                          |          2 |         47 |          0 |         14 |         61 |
+| src/kernel/drivers/usb                                                             |          2 |        755 |          0 |        174 |        929 |
+| src/kernel/framebuffer                                                             |          4 |        215 |          0 |         36 |        251 |
+| src/kernel/inputs                                                                  |          4 |        302 |          0 |         95 |        397 |
+| src/kernel/interrupts                                                              |          5 |      1,205 |          1 |        232 |      1,438 |
+| src/kernel/memory                                                                  |         11 |        907 |          0 |        314 |      1,221 |
+| src/kernel/network                                                                 |         12 |        806 |          0 |        211 |      1,017 |
+| src/kernel/network/arp                                                             |          2 |        147 |          0 |         35 |        182 |
+| src/kernel/network/dhcp                                                            |          2 |        281 |          0 |         64 |        345 |
+| src/kernel/network/icmp                                                            |          2 |         88 |          0 |         27 |        115 |
+| src/kernel/network/ipv4                                                            |          2 |        186 |          0 |         54 |        240 |
+| src/kernel/network/ipv6                                                            |          2 |         42 |          0 |         13 |         55 |
+| src/kernel/network/udp                                                             |          2 |         62 |          0 |         18 |         80 |
+| src/kernel/storage                                                                 |         10 |      1,728 |          0 |        508 |      2,236 |
+| src/kernel/storage (Files)                                                         |          4 |        234 |          0 |         79 |        313 |
+| src/kernel/storage/partition                                                       |          6 |      1,494 |          0 |        429 |      1,923 |
+| src/kernel/storage/partition (Files)                                               |          2 |        412 |          0 |        122 |        534 |
+| src/kernel/storage/partition/filesystem                                            |          4 |      1,082 |          0 |        307 |      1,389 |
+| src/kernel/storage/partition/filesystem (Files)                                    |          2 |         96 |          0 |         34 |        130 |
+| src/kernel/storage/partition/filesystem/fat32                                      |          2 |        986 |          0 |        273 |      1,259 |
+| src/os                                                                             |         16 |      1,310 |          6 |        306 |      1,622 |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+
+| filename                                                                           | language                | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+
+| /mnt/HDD 500GB/Coding/Belqen/Makefile                                              | Makefile                |        186 |          0 |         61 |        247 |
+| /mnt/HDD 500GB/Coding/Belqen/README.md                                             | Markdown                |        135 |          0 |         80 |        215 |
+| /mnt/HDD 500GB/Coding/Belqen/iso/boot/grub/grub.cfg                                | Properties              |          4 |          0 |          0 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/calculator/calculator.cpp                    | C++                     |         11 |          0 |          3 |         14 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/calculator/calculator.h                      | C++                     |          4 |          0 |          2 |          6 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/diskmanager/diskmanager.cpp                  | C++                     |        264 |          0 |         57 |        321 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/diskmanager/diskmanager.h                    | C++                     |          4 |          0 |          2 |          6 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/filebrowser/filebrowser.cpp                  | C++                     |        177 |          1 |         45 |        223 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/filebrowser/filebrowser.h                    | C++                     |          4 |          0 |          2 |          6 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/logs/logs.cpp                                | C++                     |        109 |          0 |         35 |        144 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/logs/logs.h                                  | C++                     |          4 |          0 |          2 |          6 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/terminal/terminal.cpp                        | C++                     |         11 |          0 |          3 |         14 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/terminal/terminal.h                          | C++                     |          4 |          0 |          3 |          7 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/texteditor/texteditor.c                      | C                       |         11 |          0 |          3 |         14 |
+| /mnt/HDD 500GB/Coding/Belqen/src/apps/texteditor/texteditor.h                      | C++                     |          4 |          0 |          2 |          6 |
+| /mnt/HDD 500GB/Coding/Belqen/src/boot/boot.asm                                     | x86 and x86_64 Assembly |        112 |          5 |         42 |        159 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/boot/multiboot.c                           | C                       |         74 |          0 |         17 |         91 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/boot/multiboot.h                           | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/ipc.c                                 | C                       |        117 |          0 |         31 |        148 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/ipc.h                                 | C++                     |         30 |          0 |         11 |         41 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/log.c                                 | C                       |        168 |          0 |         42 |        210 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/log.h                                 | C++                     |         17 |          0 |         11 |         28 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.c                             | C                       |        149 |          0 |         33 |        182 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.h                             | C++                     |         44 |          0 |         14 |         58 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.c                           | C                       |        143 |          0 |         41 |        184 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.h                           | C++                     |         33 |          0 |         17 |         50 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/task.c                                | C                       |         14 |          0 |          4 |         18 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/task.h                                | C++                     |         19 |          0 |          8 |         27 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/task_switch.asm                       | x86 and x86_64 Assembly |         40 |          2 |          7 |         49 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/thread.c                              | C                       |        211 |          0 |         44 |        255 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/thread.h                              | C++                     |         70 |          0 |         18 |         88 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ahci/ahci.c                        | C                       |         47 |          0 |          5 |         52 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ahci/ahci.h                        | C++                     |         12 |          0 |          6 |         18 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ethernet/e1000/e1000.c             | C                       |        306 |          0 |         62 |        368 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ethernet/e1000/e1000.h             | C++                     |         15 |          0 |          9 |         24 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ethernet/ethernet.c                | C                       |         80 |          0 |         17 |         97 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ethernet/ethernet.h                | C++                     |         25 |          0 |         10 |         35 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ide/ide.c                          | C                       |        288 |          0 |         65 |        353 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ide/ide.h                          | C++                     |         14 |          0 |          8 |         22 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/pci/pci.c                          | C                       |        109 |          0 |         21 |        130 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/pci/pci.h                          | C++                     |         27 |          0 |         12 |         39 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ps2/ps2.c                          | C                       |        180 |          0 |         48 |        228 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/ps2/ps2.h                          | C++                     |         17 |          0 |         11 |         28 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/serial/serial.c                    | C                       |         34 |          0 |          7 |         41 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/serial/serial.h                    | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/usb/usb.c                          | C                       |        725 |          0 |        167 |        892 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/drivers/usb/usb.h                          | C++                     |         30 |          0 |          7 |         37 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/framebuffer/framebuffer.c                  | C                       |          8 |          0 |          3 |         11 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/framebuffer/framebuffer.h                  | C++                     |         18 |          0 |          7 |         25 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/framebuffer/framebuffer_console.c          | C                       |        177 |          0 |         21 |        198 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/framebuffer/framebuffer_console.h          | C++                     |         12 |          0 |          5 |         17 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/inputs/keyboard.c                          | C                       |        100 |          0 |         28 |        128 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/inputs/keyboard.h                          | C++                     |         16 |          0 |         10 |         26 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/inputs/mouse.c                             | C                       |        162 |          0 |         43 |        205 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/inputs/mouse.h                             | C++                     |         24 |          0 |         14 |         38 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/interrupts/apic.c                          | C                       |        389 |          1 |         92 |        482 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/interrupts/apic.h                          | C++                     |         19 |          0 |         13 |         32 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/interrupts/interrupts.asm                  | x86 and x86_64 Assembly |        128 |          0 |         16 |        144 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/interrupts/interrupts.c                    | C                       |        624 |          0 |         95 |        719 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/interrupts/interrupts.h                    | C++                     |         45 |          0 |         16 |         61 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/kernel.c                                   | C                       |         78 |          0 |          4 |         82 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/address_space.c                     | C                       |        229 |          0 |         74 |        303 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/address_space.h                     | C++                     |         31 |          0 |         16 |         47 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/heap.c                              | C                       |        143 |          0 |         43 |        186 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/heap.h                              | C++                     |         14 |          0 |          8 |         22 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/malloc.c                            | C                       |          8 |          0 |          2 |         10 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/malloc.h                            | C++                     |         12 |          0 |          6 |         18 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/memory.h                            | C++                     |         16 |          0 |          6 |         22 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/pmm.c                               | C                       |        209 |          0 |         65 |        274 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/pmm.h                               | C++                     |         16 |          0 |         10 |         26 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/vmm.c                               | C                       |        202 |          0 |         70 |        272 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/memory/vmm.h                               | C++                     |         27 |          0 |         14 |         41 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/arp/arp.c                          | C                       |        134 |          0 |         28 |        162 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/arp/arp.h                          | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/dhcp/dhcp.c                        | C                       |        268 |          0 |         57 |        325 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/dhcp/dhcp.h                        | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/icmp/icmp.c                        | C                       |         76 |          0 |         21 |         97 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/icmp/icmp.h                        | C++                     |         12 |          0 |          6 |         18 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/ipv4/ipv4.c                        | C                       |        164 |          0 |         40 |        204 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/ipv4/ipv4.h                        | C++                     |         22 |          0 |         14 |         36 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/ipv6/ipv6.c                        | C                       |         27 |          0 |          6 |         33 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/ipv6/ipv6.h                        | C++                     |         15 |          0 |          7 |         22 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/udp/udp.c                          | C                       |         49 |          0 |         11 |         60 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/network/udp/udp.h                          | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.c                            | C                       |         70 |          0 |         23 |         93 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.h                            | C++                     |         41 |          0 |         15 |         56 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.c | C                       |        934 |          0 |        256 |      1,190 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.h | C++                     |         52 |          0 |         17 |         69 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.c  | C                       |         64 |          0 |         20 |         84 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.h  | C++                     |         32 |          0 |         14 |         46 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/partition.c              | C                       |        373 |          0 |        105 |        478 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/partition.h              | C++                     |         39 |          0 |         17 |         56 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.c                          | C                       |        107 |          0 |         31 |        138 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.h                          | C++                     |         16 |          0 |         10 |         26 |
+| /mnt/HDD 500GB/Coding/Belqen/src/linker.ld                                         | LinkerScript            |         34 |          0 |          9 |         43 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/app.h                                          | C++                     |          9 |          0 |          4 |         13 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/app_registry.h                                 | C++                     |         24 |          0 |          9 |         33 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/desktop.cpp                                    | C++                     |        102 |          0 |         23 |        125 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/desktop.h                                      | C++                     |          6 |          0 |          4 |         10 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/font.cpp                                       | C++                     |        446 |          0 |         61 |        507 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/font.h                                         | C++                     |          7 |          0 |          5 |         12 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/graphics.cpp                                   | C++                     |         84 |          1 |         23 |        108 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/graphics.h                                     | C++                     |         17 |          0 |         10 |         27 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os.cpp                                         | C++                     |         36 |          2 |          6 |         44 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os.h                                           | C++                     |         11 |          0 |          5 |         16 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os_mouse.cpp                                   | C++                     |         48 |          0 |          6 |         54 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os_mouse.h                                     | C++                     |          5 |          0 |          3 |          8 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/taskbar.cpp                                    | C++                     |         72 |          2 |         16 |         90 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/taskbar.h                                      | C++                     |          6 |          0 |          3 |          9 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/ui.cpp                                         | C++                     |        393 |          1 |        107 |        501 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/ui.h                                           | C++                     |         44 |          0 |         21 |         65 |
+| Total                                                                              |                         |     10,693 |         15 |      2,824 |     13,532 |
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+

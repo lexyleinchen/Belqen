@@ -1,18 +1,18 @@
 # Details
 
-Date : 2026-09-15 02:30:37
+Date : 2026-09-21 21:54:12
 
-Directory /home/lexyleinchen/osdev/PrintOS
+Directory /mnt/HDD 500GB/Coding/Belqen
 
-Total : 91 files,  8952 codes, 11 comments, 2292 blanks, all 11255 lines
+Total : 111 files,  10693 codes, 15 comments, 2824 blanks, all 13532 lines
 
 [Summary](results.md) / Details / [Diff Summary](diff.md) / [Diff Details](diff-details.md)
 
 ## Files
 | filename | language | code | comment | blank | total |
 | :--- | :--- | ---: | ---: | ---: | ---: |
-| [Makefile](/Makefile) | Makefile | 156 | 0 | 51 | 207 |
-| [README.md](/README.md) | Markdown | 117 | 0 | 68 | 185 |
+| [Makefile](/Makefile) | Makefile | 186 | 0 | 61 | 247 |
+| [README.md](/README.md) | Markdown | 135 | 0 | 80 | 215 |
 | [iso/boot/grub/grub.cfg](/iso/boot/grub/grub.cfg) | Properties | 4 | 0 | 0 | 4 |
 | [src/apps/calculator/calculator.cpp](/src/apps/calculator/calculator.cpp) | C++ | 11 | 0 | 3 | 14 |
 | [src/apps/calculator/calculator.h](/src/apps/calculator/calculator.h) | C++ | 4 | 0 | 2 | 6 |
@@ -26,20 +26,29 @@ Total : 91 files,  8952 codes, 11 comments, 2292 blanks, all 11255 lines
 | [src/apps/terminal/terminal.h](/src/apps/terminal/terminal.h) | C++ | 4 | 0 | 3 | 7 |
 | [src/apps/texteditor/texteditor.c](/src/apps/texteditor/texteditor.c) | C | 11 | 0 | 3 | 14 |
 | [src/apps/texteditor/texteditor.h](/src/apps/texteditor/texteditor.h) | C++ | 4 | 0 | 2 | 6 |
-| [src/boot/boot.asm](/src/boot/boot.asm) | x86 and x86_64 Assembly | 107 | 4 | 41 | 152 |
-| [src/kernel/boot/multiboot.c](/src/kernel/boot/multiboot.c) | C | 69 | 0 | 16 | 85 |
-| [src/kernel/boot/multiboot.h](/src/kernel/boot/multiboot.h) | C++ | 12 | 0 | 6 | 18 |
-| [src/kernel/core/log.c](/src/kernel/core/log.c) | C | 165 | 0 | 41 | 206 |
+| [src/boot/boot.asm](/src/boot/boot.asm) | x86 and x86_64 Assembly | 112 | 5 | 42 | 159 |
+| [src/kernel/boot/multiboot.c](/src/kernel/boot/multiboot.c) | C | 74 | 0 | 17 | 91 |
+| [src/kernel/boot/multiboot.h](/src/kernel/boot/multiboot.h) | C++ | 13 | 0 | 7 | 20 |
+| [src/kernel/core/ipc.c](/src/kernel/core/ipc.c) | C | 117 | 0 | 31 | 148 |
+| [src/kernel/core/ipc.h](/src/kernel/core/ipc.h) | C++ | 30 | 0 | 11 | 41 |
+| [src/kernel/core/log.c](/src/kernel/core/log.c) | C | 168 | 0 | 42 | 210 |
 | [src/kernel/core/log.h](/src/kernel/core/log.h) | C++ | 17 | 0 | 11 | 28 |
-| [src/kernel/core/work.c](/src/kernel/core/work.c) | C | 95 | 0 | 25 | 120 |
-| [src/kernel/core/work.h](/src/kernel/core/work.h) | C++ | 29 | 0 | 14 | 43 |
+| [src/kernel/core/process.c](/src/kernel/core/process.c) | C | 149 | 0 | 33 | 182 |
+| [src/kernel/core/process.h](/src/kernel/core/process.h) | C++ | 44 | 0 | 14 | 58 |
+| [src/kernel/core/scheduler.c](/src/kernel/core/scheduler.c) | C | 143 | 0 | 41 | 184 |
+| [src/kernel/core/scheduler.h](/src/kernel/core/scheduler.h) | C++ | 33 | 0 | 17 | 50 |
+| [src/kernel/core/task.c](/src/kernel/core/task.c) | C | 14 | 0 | 4 | 18 |
+| [src/kernel/core/task.h](/src/kernel/core/task.h) | C++ | 19 | 0 | 8 | 27 |
+| [src/kernel/core/task\_switch.asm](/src/kernel/core/task_switch.asm) | x86 and x86_64 Assembly | 40 | 2 | 7 | 49 |
+| [src/kernel/core/thread.c](/src/kernel/core/thread.c) | C | 211 | 0 | 44 | 255 |
+| [src/kernel/core/thread.h](/src/kernel/core/thread.h) | C++ | 70 | 0 | 18 | 88 |
 | [src/kernel/drivers/ahci/ahci.c](/src/kernel/drivers/ahci/ahci.c) | C | 47 | 0 | 5 | 52 |
 | [src/kernel/drivers/ahci/ahci.h](/src/kernel/drivers/ahci/ahci.h) | C++ | 12 | 0 | 6 | 18 |
 | [src/kernel/drivers/ethernet/e1000/e1000.c](/src/kernel/drivers/ethernet/e1000/e1000.c) | C | 306 | 0 | 62 | 368 |
 | [src/kernel/drivers/ethernet/e1000/e1000.h](/src/kernel/drivers/ethernet/e1000/e1000.h) | C++ | 15 | 0 | 9 | 24 |
 | [src/kernel/drivers/ethernet/ethernet.c](/src/kernel/drivers/ethernet/ethernet.c) | C | 80 | 0 | 17 | 97 |
 | [src/kernel/drivers/ethernet/ethernet.h](/src/kernel/drivers/ethernet/ethernet.h) | C++ | 25 | 0 | 10 | 35 |
-| [src/kernel/drivers/ide/ide.c](/src/kernel/drivers/ide/ide.c) | C | 292 | 0 | 66 | 358 |
+| [src/kernel/drivers/ide/ide.c](/src/kernel/drivers/ide/ide.c) | C | 288 | 0 | 65 | 353 |
 | [src/kernel/drivers/ide/ide.h](/src/kernel/drivers/ide/ide.h) | C++ | 14 | 0 | 8 | 22 |
 | [src/kernel/drivers/pci/pci.c](/src/kernel/drivers/pci/pci.c) | C | 109 | 0 | 21 | 130 |
 | [src/kernel/drivers/pci/pci.h](/src/kernel/drivers/pci/pci.h) | C++ | 27 | 0 | 12 | 39 |
@@ -57,12 +66,23 @@ Total : 91 files,  8952 codes, 11 comments, 2292 blanks, all 11255 lines
 | [src/kernel/inputs/keyboard.h](/src/kernel/inputs/keyboard.h) | C++ | 16 | 0 | 10 | 26 |
 | [src/kernel/inputs/mouse.c](/src/kernel/inputs/mouse.c) | C | 162 | 0 | 43 | 205 |
 | [src/kernel/inputs/mouse.h](/src/kernel/inputs/mouse.h) | C++ | 24 | 0 | 14 | 38 |
-| [src/kernel/interrupts/apic.c](/src/kernel/interrupts/apic.c) | C | 390 | 0 | 92 | 482 |
+| [src/kernel/interrupts/apic.c](/src/kernel/interrupts/apic.c) | C | 389 | 1 | 92 | 482 |
 | [src/kernel/interrupts/apic.h](/src/kernel/interrupts/apic.h) | C++ | 19 | 0 | 13 | 32 |
 | [src/kernel/interrupts/interrupts.asm](/src/kernel/interrupts/interrupts.asm) | x86 and x86_64 Assembly | 128 | 0 | 16 | 144 |
-| [src/kernel/interrupts/interrupts.c](/src/kernel/interrupts/interrupts.c) | C | 616 | 0 | 94 | 710 |
+| [src/kernel/interrupts/interrupts.c](/src/kernel/interrupts/interrupts.c) | C | 624 | 0 | 95 | 719 |
 | [src/kernel/interrupts/interrupts.h](/src/kernel/interrupts/interrupts.h) | C++ | 45 | 0 | 16 | 61 |
-| [src/kernel/kernel.c](/src/kernel/kernel.c) | C | 59 | 0 | 3 | 62 |
+| [src/kernel/kernel.c](/src/kernel/kernel.c) | C | 78 | 0 | 4 | 82 |
+| [src/kernel/memory/address\_space.c](/src/kernel/memory/address_space.c) | C | 229 | 0 | 74 | 303 |
+| [src/kernel/memory/address\_space.h](/src/kernel/memory/address_space.h) | C++ | 31 | 0 | 16 | 47 |
+| [src/kernel/memory/heap.c](/src/kernel/memory/heap.c) | C | 143 | 0 | 43 | 186 |
+| [src/kernel/memory/heap.h](/src/kernel/memory/heap.h) | C++ | 14 | 0 | 8 | 22 |
+| [src/kernel/memory/malloc.c](/src/kernel/memory/malloc.c) | C | 8 | 0 | 2 | 10 |
+| [src/kernel/memory/malloc.h](/src/kernel/memory/malloc.h) | C++ | 12 | 0 | 6 | 18 |
+| [src/kernel/memory/memory.h](/src/kernel/memory/memory.h) | C++ | 16 | 0 | 6 | 22 |
+| [src/kernel/memory/pmm.c](/src/kernel/memory/pmm.c) | C | 209 | 0 | 65 | 274 |
+| [src/kernel/memory/pmm.h](/src/kernel/memory/pmm.h) | C++ | 16 | 0 | 10 | 26 |
+| [src/kernel/memory/vmm.c](/src/kernel/memory/vmm.c) | C | 202 | 0 | 70 | 272 |
+| [src/kernel/memory/vmm.h](/src/kernel/memory/vmm.h) | C++ | 27 | 0 | 14 | 41 |
 | [src/kernel/network/arp/arp.c](/src/kernel/network/arp/arp.c) | C | 134 | 0 | 28 | 162 |
 | [src/kernel/network/arp/arp.h](/src/kernel/network/arp/arp.h) | C++ | 13 | 0 | 7 | 20 |
 | [src/kernel/network/dhcp/dhcp.c](/src/kernel/network/dhcp/dhcp.c) | C | 268 | 0 | 57 | 325 |
@@ -77,7 +97,7 @@ Total : 91 files,  8952 codes, 11 comments, 2292 blanks, all 11255 lines
 | [src/kernel/network/udp/udp.h](/src/kernel/network/udp/udp.h) | C++ | 13 | 0 | 7 | 20 |
 | [src/kernel/storage/block.c](/src/kernel/storage/block.c) | C | 70 | 0 | 23 | 93 |
 | [src/kernel/storage/block.h](/src/kernel/storage/block.h) | C++ | 41 | 0 | 15 | 56 |
-| [src/kernel/storage/partition/filesystem/fat32/fat32.c](/src/kernel/storage/partition/filesystem/fat32/fat32.c) | C | 932 | 0 | 256 | 1,188 |
+| [src/kernel/storage/partition/filesystem/fat32/fat32.c](/src/kernel/storage/partition/filesystem/fat32/fat32.c) | C | 934 | 0 | 256 | 1,190 |
 | [src/kernel/storage/partition/filesystem/fat32/fat32.h](/src/kernel/storage/partition/filesystem/fat32/fat32.h) | C++ | 52 | 0 | 17 | 69 |
 | [src/kernel/storage/partition/filesystem/filesystem.c](/src/kernel/storage/partition/filesystem/filesystem.c) | C | 64 | 0 | 20 | 84 |
 | [src/kernel/storage/partition/filesystem/filesystem.h](/src/kernel/storage/partition/filesystem/filesystem.h) | C++ | 32 | 0 | 14 | 46 |
@@ -85,7 +105,7 @@ Total : 91 files,  8952 codes, 11 comments, 2292 blanks, all 11255 lines
 | [src/kernel/storage/partition/partition.h](/src/kernel/storage/partition/partition.h) | C++ | 39 | 0 | 17 | 56 |
 | [src/kernel/storage/storage.c](/src/kernel/storage/storage.c) | C | 107 | 0 | 31 | 138 |
 | [src/kernel/storage/storage.h](/src/kernel/storage/storage.h) | C++ | 16 | 0 | 10 | 26 |
-| [src/linker.ld](/src/linker.ld) | LinkerScript | 32 | 0 | 7 | 39 |
+| [src/linker.ld](/src/linker.ld) | LinkerScript | 34 | 0 | 9 | 43 |
 | [src/os/app.h](/src/os/app.h) | C++ | 9 | 0 | 4 | 13 |
 | [src/os/app\_registry.h](/src/os/app_registry.h) | C++ | 24 | 0 | 9 | 33 |
 | [src/os/desktop.cpp](/src/os/desktop.cpp) | C++ | 102 | 0 | 23 | 125 |

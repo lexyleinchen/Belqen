@@ -52,6 +52,14 @@ Belqen is an ongoing project and is intended primarily for experimentation, lear
 
 **Belqen-Kernel** is the core kernel of the project, providing the foundational functionality of the system.
 
+**Kernel Architecture**
+
+Belqen uses a **monolithic kernel architecture** rather than a microkernel architecture.
+
+The core operating system functionality, including hardware communication, device drivers, memory management, interrupt handling, scheduling, networking, and other low-level system services, is implemented within the kernel or operates as part of the kernel's core environment.
+
+This architecture is intentionally used as part of Belqen's goal of learning and experimenting with low-level operating system design and understanding how the different components of an operating system interact directly with the kernel.
+
 **Belqen-OS** is the reference OS built around Belqen-Kernel, providing the complete user environment.
 
 The name reflects the project's purpose: **building a foundation for learning, questioning how systems work, engineering new ideas, and noticing what happens beneath the surface.**

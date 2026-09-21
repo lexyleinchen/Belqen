@@ -17,7 +17,7 @@ static void ethernet_test(void) {
     };
 
     uint8_t payload[] = {
-        'P', 'r', 'i', 'n', 't', 'O', 'S'
+        'B', 'e', 'l', 'q', 'e', 'n'
     };
 
     kernel_log("Ethernet test sending...");

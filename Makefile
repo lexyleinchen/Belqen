@@ -65,7 +65,22 @@ build/address_space.o: src/kernel/memory/address_space.c | build
 build/log.o: src/kernel/core/log.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
-build/work.o: src/kernel/core/work.c | build
+build/process.o: src/kernel/core/process.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/ipc.o: src/kernel/core/ipc.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/scheduler.o: src/kernel/core/scheduler.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/task_switch.o: src/kernel/core/task_switch.asm | build
+	$(AS) -f elf64 $< -o $@
+
+build/task.o: src/kernel/core/task.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/thread.o: src/kernel/core/thread.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/framebuffer.o: src/kernel/framebuffer/framebuffer.c | build
@@ -179,7 +194,12 @@ $(KERNEL): build/boot.o \
 		build/malloc.o \
 		build/address_space.o \
 		build/log.o \
-		build/work.o \
+		build/process.o \
+		build/ipc.o \
+		build/scheduler.o \
+		build/task_switch.o \
+		build/task.o \
+		build/thread.o \
 		build/framebuffer.o \
 		build/framebuffer_console.o \
 		build/block.o \
@@ -217,7 +237,7 @@ $(KERNEL): build/boot.o \
 iso: $(KERNEL)
 	mkdir -p iso/boot/grub
 	cp $(KERNEL) iso/boot/kernel.bin
-	grub2-mkrescue -o build/PrintOS.iso iso
+	grub2-mkrescue -o build/Belqen.iso iso
 
 clean:
 	rm -rf build

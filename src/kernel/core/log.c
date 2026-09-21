@@ -1,6 +1,7 @@
 #include "log.h"
 #include "../framebuffer/framebuffer_console.h"
 #include "../drivers/serial/serial.h"
+#include "scheduler.h"
 
 #include <stdarg.h>
 
@@ -16,6 +17,8 @@ void log_init(void) {
 }
 
 void kernel_log(const char* text, ...) {
+    uint64_t irq_flags = irq_save();
+
     if (log_line_count >= LOG_MAX_LINES) {
         for (int i = 1; i < LOG_MAX_LINES; i++) {
             for (int j = 0; j < LOG_LINE_LENGTH; j++) {
@@ -167,6 +170,7 @@ void kernel_log(const char* text, ...) {
 
     log_lines[log_line_count][output_position] = '\0';
     log_line_count++;
+    irq_restore(irq_flags);
 }
 
 void log_init_console(void) {

@@ -282,13 +282,12 @@ static void ide_test_write(void) {
     }
 
     uint64_t test_lba = 100;
-    write_buffer[0] = 'P';
-    write_buffer[1] = 'r';
-    write_buffer[2] = 'i';
-    write_buffer[3] = 'n';
-    write_buffer[4] = 't';
-    write_buffer[5] = 'O';
-    write_buffer[6] = 'S';
+    write_buffer[0] = 'B';
+    write_buffer[1] = 'e';
+    write_buffer[2] = 'l';
+    write_buffer[3] = 'q';
+    write_buffer[4] = 'e';
+    write_buffer[5] = 'n';
     kernel_log("ide testing sector write...");
 
     if (!block_write(&ide_block_device, test_lba, 1, write_buffer)) {
@@ -303,7 +302,7 @@ static void ide_test_write(void) {
         return;
     }
 
-    if (read_buffer[0] == 'P' && read_buffer[1] == 'r' && read_buffer[2] == 'i' && read_buffer[3] == 'n' && read_buffer[4] == 't' && read_buffer[5] == 'O' && read_buffer[6] == 'S') {
+    if (read_buffer[0] == 'B' && read_buffer[1] == 'e' && read_buffer[2] == 'l' && read_buffer[3] == 'q' && read_buffer[4] == 'e' && read_buffer[5] == 'n') {
         kernel_log("ide write verification successfull.");
     }
     else {

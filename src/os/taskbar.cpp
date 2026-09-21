@@ -20,7 +20,7 @@ static void draw_start_menu() {
     int menu_x = 10;
     int menu_y = screen_height - TASKBAR_HEIGHT - menu_height;
     graphics_rectangle(menu_x, menu_y, menu_width, menu_height, 0xFF404040);
-    font_draw_text(menu_x + (menu_width - ((7 * 10) + (6 * 4))) / 2, menu_y + 15, "PrintOS", 0xFFFFFFFF);
+    font_draw_text(menu_x + (menu_width - ((6 * 10) + (5 * 4))) / 2, menu_y + 15, "Belqen", 0xFFFFFFFF);
 
     if (graphics_button(menu_x + 15, menu_y + 15 + spacing + 10, menu_width - 30, button_height, 0xFF606060, "Restart", 0xFFFFFFFF)) {
         // restart

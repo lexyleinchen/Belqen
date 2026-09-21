@@ -1,7 +1,7 @@
 #include "fat32.h"
 
 #include "../../../../core/log.h"
-#include "../../../../core/work.h"
+#include "../../../../core/task.h"
 
 static uint16_t read_u16_le(const uint8_t* buffer) {
     return (uint16_t)buffer[0] | ((uint16_t)buffer[1] << 8);
@@ -62,13 +62,7 @@ static FAT32FormatStatus fat32_format_status(FAT32FormatWork* work) {
     return FAT32_FORMAT_RUNNING;
 }
 
-static int fat32_format_worker(KernelWork* kernel_work) {
-    if (!kernel_work) {
-        return 1;
-    }
-
-    FAT32FormatWork* work = (FAT32FormatWork*)kernel_work->data;
-
+static int fat32_format_step(FAT32FormatWork* work) {
     if (!work || !work->device) {
         return 1;
     }
@@ -105,13 +99,13 @@ static int fat32_format_worker(KernelWork* kernel_work) {
         work->sector[0] = 0xEB;
         work->sector[1] = 0x58;
         work->sector[2] = 0x90;
-        work->sector[3] = 'P';
-        work->sector[4] = 'r';
-        work->sector[5] = 'i';
-        work->sector[6] = 'n';
-        work->sector[7] = 't';
-        work->sector[8] = 'O';
-        work->sector[9] = 'S';
+        work->sector[3] = 'B';
+        work->sector[4] = 'e';
+        work->sector[5] = 'l';
+        work->sector[6] = 'q';
+        work->sector[7] = 'e';
+        work->sector[8] = 'n';
+        work->sector[9] = ' ';
         work->sector[10] = ' ';
         write_u16_le(&work->sector[11], 512);
         work->sector[13] = (uint8_t)work->sectors_per_cluster;
@@ -134,13 +128,13 @@ static int fat32_format_worker(KernelWork* kernel_work) {
         work->sector[64] = 0x80;
         work->sector[66] = 0x29;
         write_u32_le(&work->sector[67], 0x50524E54);
-        work->sector[71] = 'P';
-        work->sector[72] = 'r';
-        work->sector[73] = 'i';
-        work->sector[74] = 'n';
-        work->sector[75] = 't';
-        work->sector[76] = 'O';
-        work->sector[77] = 'S';
+        work->sector[71] = 'B';
+        work->sector[72] = 'e';
+        work->sector[73] = 'l';
+        work->sector[74] = 'q';
+        work->sector[75] = 'e';
+        work->sector[76] = 'n';
+        work->sector[77] = '-';
         work->sector[82] = 'F';
         work->sector[83] = 'A';
         work->sector[84] = 'T';
@@ -186,7 +180,7 @@ static int fat32_format_worker(KernelWork* kernel_work) {
         if (!block_write(work->device, 1, 1, work->sector)) {
             kernel_log("fat32 failed to write fat32 fsinfo.");
             work->stage = 0xFFFFFFFF;
-            return 0;
+            return 1;
         }
 
         work->progress++;
@@ -253,6 +247,14 @@ static int fat32_format_worker(KernelWork* kernel_work) {
     return 1;
 }
 
+static void fat32_format_thread(void* arg) {
+    FAT32FormatWork* work = (FAT32FormatWork*)arg;
+
+    while (!fat32_format_step(work)) {
+        thread_yield();
+    }
+}
+
 int fat32_format_async(BlockDevice* device, FAT32FormatWork* work) {
     if (!device || !work) {
         return 0;
@@ -298,16 +300,16 @@ int fat32_format_async(BlockDevice* device, FAT32FormatWork* work) {
     uint32_t reserved_work = reserved_sectors - 2;
     uint32_t fat_work = fat_count * fat_sectors;
     work->total_progress = reserved_work + 1 + 1 + 1 + fat_work + sectors_per_cluster;
-    int work_id = work_submit(fat32_format_worker, work);
+    Task* task = task_create("fat32_format", (void*)fat32_format_thread, work, 1);
 
-    if (work_id == 0) {
-        kernel_log("fat32 failed to submit format worker.");
+    if (!task) {
+        kernel_log("fat32 failed to start format thread.");
         work->stage = 0xFFFFFFFF;
         return 0;
     }
 
-    work->work_id = work_id;
-    kernel_log("fat32 format worker submitted.");
+    work->work_id = (int)task->tid;
+    kernel_log("fat32 format thread started.");
     return 1;
 }
 
@@ -592,13 +594,13 @@ int fat32_format(BlockDevice* device) {
     sector[0] = 0xEB;
     sector[1] = 0x58;
     sector[2] = 0x90;
-    sector[3] = 'P';
-    sector[4] = 'r';
-    sector[5] = 'i';
-    sector[6] = 'n';
-    sector[7] = 't';
-    sector[8] = 'O';
-    sector[9] = 'S';
+    sector[3] = 'B';
+    sector[4] = 'e';
+    sector[5] = 'l';
+    sector[6] = 'q';
+    sector[7] = 'e';
+    sector[8] = 'n';
+    sector[9] = ' ';
     sector[10] = ' ';
     write_u16_le(&sector[11], bytes_per_sector);
     sector[13] = sectors_per_cluster;
@@ -621,13 +623,13 @@ int fat32_format(BlockDevice* device) {
     sector[64] = 0x80;
     sector[66] = 0x29;
     write_u32_le(&sector[67], 0x50524E54);
-    sector[71] = 'P';
-    sector[72] = 'r';
-    sector[73] = 'i';
-    sector[74] = 'n';
-    sector[75] = 't';
-    sector[76] = 'O';
-    sector[77] = 'S';
+    sector[71] = 'B';
+    sector[72] = 'e';
+    sector[73] = 'l';
+    sector[74] = 'q';
+    sector[75] = 'e';
+    sector[76] = 'n';
+    sector[77] = ' ';
     sector[78] = ' ';
     sector[79] = ' ';
     sector[80] = ' ';

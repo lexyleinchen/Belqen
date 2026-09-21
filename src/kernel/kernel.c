@@ -1,7 +1,8 @@
 #include <stdint.h>
 
 #include "core/log.h"
-#include "core/work.h"
+#include "core/task.h"
+#include "core/ipc.h"
 #include "boot/multiboot.h"
 #include "interrupts/interrupts.h"
 #include "interrupts/apic.h"
@@ -28,10 +29,20 @@
 #include "inputs/mouse.h"
 #include "../os/os.h"
 
+static void kernel_loop_thread(void* arg) {
+    while (1) {
+        keyboard_process();
+        usb_poll();
+        os_draw();
+        e1000_poll();
+        thread_yield();
+    }
+}
+
 void kernel_main(uint32_t multiboot_address) {
     log_init();
     serial_init();
-    kernel_log("PrintOS Kernel Starting...");
+    kernel_log("Belqen Kernel Starting...");
     multiboot_init(multiboot_address);
     log_init_console();
     pmm_init(multiboot_get_address());
@@ -41,9 +52,10 @@ void kernel_main(uint32_t multiboot_address) {
     heap_test();
     apic_init();
     interrupts_init();
+    task_init();
+    ipc_init();
     address_space_test();
-    apic_timer_init(1000);
-    work_init();
+    apic_timer_init(100);
     pci_init();
     ethernet_init();
     arp_init();
@@ -60,13 +72,11 @@ void kernel_main(uint32_t multiboot_address) {
     os_init();
     kernel_log("kernel started.");
     log_disable_console();
-    log_dump_serial(); // DEBUG
+    log_dump_serial();
+    Process* kernel_process = process_create("kernel");
+    thread_create(kernel_process, "kernel_loop", (void*)kernel_loop_thread, 0, 1);
 
     while (1) {
-        keyboard_process();
-        usb_poll();
-        work_update();
-        os_draw();
-        e1000_poll();
+        __asm__ volatile ("hlt");
     }
 }
