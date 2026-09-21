@@ -1,0 +1,70 @@
+# OS / kernel project generated output
+build/
+iso/
+out/
+dist/
+bin/
+obj/
+tmp/
+temp/
+
+# Compiled binaries and object files
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.elf
+*.bin
+*.img
+*.iso
+*.raw
+*.qcow2
+*.vmdk
+*.map
+*.sym
+*.lst
+*.ko
+
+# Compilers / linker artifacts
+*.d
+*.gcno
+*.gcda
+*.gch
+*.pch
+*.tmp
+*.temp
+
+# Logs, dumps, and core files
+*.log
+*.core
+*.pid
+*.stackdump
+*.trs
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# C/C++ build cache
+compile_commands.json
+.cache/
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+Makefile.bak
+
+# Local tooling / test artifacts
+coverage/
+debug/
+*.profraw
+*.profdata
+*.gcov
