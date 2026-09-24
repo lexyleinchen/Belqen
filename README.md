@@ -34,6 +34,7 @@ The project currently includes work on areas such as:
 * Networking using arp/ipv4 and ipv6
 * Interrupt and exception handling
 * Processes and threads
+* User-mode execution and system calls
 
 Belqen is an ongoing project and is intended primarily for experimentation, learning, and development.
 
