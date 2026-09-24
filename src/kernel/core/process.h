@@ -9,6 +9,7 @@ extern "C" {
 
 #define PROCESS_MAX_COUNT 64
 #define PROCESS_NAME_LENGTH 32
+#define PROCESS_FLAG_USER 0x00000001
 
 struct Thread;
 
@@ -48,6 +49,8 @@ Process* process_find_by_pid(uint32_t pid);
 void process_set_state(Process* process, ProcessState state);
 
 void process_exit(Process* process, uint32_t exit_code);
+
+Process* process_create_user(const char* name);
 
 extern Process* g_current_process;
 

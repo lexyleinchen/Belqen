@@ -34,6 +34,13 @@ isr%1:
     jmp interrupt_common
 %endmacro
 
+global isr128
+
+isr128:
+    push 0
+    push 128
+    jmp interrupt_common
+
 interrupt_common:
     cld
 

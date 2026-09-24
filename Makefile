@@ -65,6 +65,9 @@ build/address_space.o: src/kernel/memory/address_space.c | build
 build/log.o: src/kernel/core/log.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
+build/loader.o: src/kernel/core/loader.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
 build/process.o: src/kernel/core/process.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -72,6 +75,9 @@ build/ipc.o: src/kernel/core/ipc.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/scheduler.o: src/kernel/core/scheduler.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
+build/syscall.o: src/kernel/core/syscall.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
 build/task_switch.o: src/kernel/core/task_switch.asm | build
@@ -194,9 +200,11 @@ $(KERNEL): build/boot.o \
 		build/malloc.o \
 		build/address_space.o \
 		build/log.o \
+		build/loader.o \
 		build/process.o \
 		build/ipc.o \
 		build/scheduler.o \
+		build/syscall.o \
 		build/task_switch.o \
 		build/task.o \
 		build/thread.o \

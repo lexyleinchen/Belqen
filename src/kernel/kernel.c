@@ -3,6 +3,9 @@
 #include "core/log.h"
 #include "core/task.h"
 #include "core/ipc.h"
+#include "core/process.h"
+#include "core/thread.h"
+#include "core/scheduler.h"
 #include "boot/multiboot.h"
 #include "interrupts/interrupts.h"
 #include "interrupts/apic.h"
@@ -29,14 +32,78 @@
 #include "inputs/mouse.h"
 #include "../os/os.h"
 
+static Process* ring3_test_process;
+
 static void kernel_loop_thread(void* arg) {
     while (1) {
         keyboard_process();
         usb_poll();
         os_draw();
         e1000_poll();
+
+        if (ring3_test_process && ring3_test_process->state == PROCESS_STATE_ZOMBIE) {
+            ring3_test_process = 0;
+            kernel_log("Ring 3 test exited.");
+            log_disable_console();
+            log_dump_serial();
+        }
+
         thread_yield();
     }
+}
+
+static void ring3_test(void) {
+    static const uint8_t user_code[] = {
+        0xB8, 0x00, 0x00, 0x00, 0x00,
+        0xCD, 0x80,
+        0xB8, 0x02, 0x00, 0x00, 0x00,
+        0x31, 0xFF,
+        0xCD, 0x80
+    };
+
+    const uint64_t user_entry = USER_SPACE_START;
+    const uint64_t code_size = VMM_PAGE_SIZE;
+    Process* process = process_create_user("ring3_test");
+
+    if (!process) {
+        kernel_panic("ring 3 process creation failed");
+    }
+
+    AddressSpace* address_space = (AddressSpace*)process->address_space;
+
+    if (!address_space_add_region(address_space, user_entry, code_size, 0)) {
+        kernel_panic("ring 3 code region creation failed");
+    }
+
+    uint64_t physical = pmm_allocate_page();
+
+    if (!physical) {
+        kernel_panic("ring 3 code page allocation failed");
+    }
+
+    if (!address_space_map(address_space, user_entry, physical, 0)) {
+        kernel_panic("ring 3 code page mapping failed");
+    }
+
+    uint64_t irq_flags = irq_save();
+    uint64_t old_directory = vmm_get_current_directory();
+    vmm_switch_directory(address_space->directory);
+
+    for (uint64_t i = 0; i < sizeof(user_code); i++) {
+        ((uint8_t*)(uintptr_t)user_entry)[i] = user_code[i];
+    }
+
+    vmm_switch_directory(old_directory);
+    irq_restore(irq_flags);
+    Thread* thread = thread_create_user(process, "ring3_test", (void*)(uintptr_t)user_entry, 1);
+
+    if (!thread) {
+        kernel_panic("ring 3 thread creation failed");
+    }
+
+    process_set_state(process, PROCESS_STATE_READY);
+    ring3_test_process = process;
+    kernel_log("Ring 3 test queued.");
 }
 
 void kernel_main(uint32_t multiboot_address) {
@@ -71,10 +138,9 @@ void kernel_main(uint32_t multiboot_address) {
     ps2_init();
     os_init();
     kernel_log("kernel started.");
-    log_disable_console();
-    log_dump_serial();
     Process* kernel_process = process_create("kernel");
     thread_create(kernel_process, "kernel_loop", (void*)kernel_loop_thread, 0, 1);
+    ring3_test();
 
     while (1) {
         __asm__ volatile ("hlt");

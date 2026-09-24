@@ -134,10 +134,17 @@ section .data
 
 align 8
 
+global gdt_tss
+
 gdt64:
     dq 0
     dq 0x00209A0000000000
     dq 0x0000920000000000
+    dq 0x0020FA0000000000
+    dq 0x0000F20000000000
+
+gdt_tss:
+    times 2 dq 0
 
 gdt64_end:
 
@@ -151,8 +158,23 @@ align 16
 
 global stack_bottom
 global stack_top
+global tss64
 
 stack_bottom:
     resb 65536
 
 stack_top:
+
+align 16
+
+tss64:
+    resb 104
+
+section .text
+
+global load_tss
+
+load_tss:
+    mov ax, 0x28
+    ltr ax
+    ret

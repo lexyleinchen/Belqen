@@ -46,8 +46,6 @@ typedef enum {
 
 int fat32_mount(BlockDevice* device, Filesystem* filesystem);
 
-int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
-
 int fat32_format(BlockDevice* device);
 
 int fat32_format_async(BlockDevice* device, FAT32FormatWork* work);
@@ -60,7 +58,25 @@ uint32_t fat32_format_get_percent(FAT32FormatWork* work);
 
 int fat32_create_directory(Filesystem* filesystem, uint32_t parent_cluster, const char* name);
 
+int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
+
 int fat32_create_file(Filesystem* filesystem, uint32_t parent_cluster, const char* name);
+
+int fat32_open_file(Filesystem* filesystem, const char* name, FilesystemFile* file);
+
+int fat32_read_file(FilesystemFile* file, void* buffer, uint32_t size, uint32_t* bytes_read);
+
+int fat32_write_file(FilesystemFile* file, const void* buffer, uint32_t size, uint32_t* bytes_written);
+
+int fat32_open_path(Filesystem* filesystem, const char* path, FilesystemFile* file);
+
+int fat32_create_directory_path(Filesystem* filesystem, const char* path);
+
+int fat32_create_file_path(Filesystem* filesystem, const char* path);
+
+int fat32_delete_directory(Filesystem* filesystem, const char* path);
+
+int fat32_delete_file(Filesystem* filesystem, const char* path);
 
 #ifdef __cplusplus
 }

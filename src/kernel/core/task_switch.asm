@@ -47,3 +47,10 @@ task_switch:
 
     popfq
     ret
+
+global user_thread_bootstrap
+extern user_thread_prepare
+
+user_thread_bootstrap:
+    call user_thread_prepare
+    iretq

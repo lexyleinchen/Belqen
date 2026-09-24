@@ -37,7 +37,7 @@ static int partition_read(BlockDevice* device, uint64_t lba, uint32_t count, voi
         return 0;
     }
 
-    if (lba + count > partition->sector_count) {
+    if (lba >= partition->sector_count || count > partition->sector_count - lba) {
         return 0;
     }
 
@@ -56,8 +56,8 @@ static int partition_write(BlockDevice* device, uint64_t lba, uint32_t count, co
     if (!partition) {
         return 0;
     }
-
-    if (lba + count > partition->sector_count) {
+    
+    if (lba >= partition->sector_count || count > partition->sector_count - lba) {
         return 0;
     }
 

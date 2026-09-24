@@ -1,5 +1,6 @@
 #include "scheduler.h"
 #include "process.h"
+#include "../memory/address_space.h"
 
 Scheduler g_scheduler;
 
@@ -137,6 +138,13 @@ void scheduler_switch_to(Thread* next) {
     g_scheduler.current = next;
     next->state = THREAD_STATE_RUNNING;
 
+    if (next->process && next->process->address_space) {
+        address_space_switch((AddressSpace*)next->process->address_space);
+    }
+    else {
+        address_space_switch(0);
+    }
+
     if (current) {
         task_switch(&current->context, &next->context);
     }
@@ -167,7 +175,7 @@ void scheduler_tick(void) {
         return;
     }
 
-    if (current->state == THREAD_STATE_RUNNING) {
+    if (current->state == THREAD_STATE_RUNNING && current->tid != 0) {
         current->state = THREAD_STATE_READY;
         scheduler_enqueue(current);
     }

@@ -1,4 +1,5 @@
 #include "process.h"
+#include "../memory/address_space.h"
 
 static Process processes[PROCESS_MAX_COUNT];
 static Process* process_head = 0;
@@ -19,7 +20,7 @@ static void process_reap(Process* process) {
     if (parent) {
         for (uint32_t i = 0; i < parent->child_count; i++) {
             if (parent->children[i] == process) {
-                parent->children[i] = parent->children[parent->child_count--];
+                parent->children[i] = parent->children[--parent->child_count];
                 parent->children[parent->child_count] = 0;
                 break;
             } 
@@ -38,6 +39,11 @@ static void process_reap(Process* process) {
     }
     else {
         process_tail = process->previous;
+    }
+
+    if (process->address_space) {
+        address_space_destroy((AddressSpace*)process->address_space);
+        process->address_space = 0;
     }
 
     process->pid = 0;
@@ -151,6 +157,25 @@ Process* process_create(const char* name) {
     }
 
     process_enqueue(process);
+    return process;
+}
+
+Process* process_create_user(const char* name) {
+    Process* process = process_create(name);
+
+    if (!process) {
+        return 0;
+    }
+
+    AddressSpace* address_space = address_space_create();
+
+    if (!address_space) {
+        process_exit(process, 1);
+        return 0;
+    }
+
+    process->address_space = address_space;
+    process->flags |= PROCESS_FLAG_USER;
     return process;
 }
 

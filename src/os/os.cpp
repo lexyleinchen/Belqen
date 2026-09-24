@@ -5,10 +5,13 @@
 #include "os_mouse.h"
 #include "font.h"
 #include "ui.h"
+#include "os_syscall.h"
 
 #include "../kernel/framebuffer/framebuffer.h"
 #include "../kernel/core/log.h"
 #include "../kernel/inputs/mouse.h"
+
+static const char send_message[] = "hello from user process";
 
 extern "C"
 void os_init(void) {

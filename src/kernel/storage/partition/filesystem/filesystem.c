@@ -82,3 +82,164 @@ int filesystem_create_file(Filesystem* filesystem, uint32_t parent_cluster, cons
 
     return 0;
 }
+
+int filesystem_open(Filesystem* filesystem, const char* name, FilesystemFile* file) {
+    if (!filesystem || !name || !file) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_open_file(filesystem, name, file);
+    }
+
+    return 0;
+}
+
+int filesystem_read(FilesystemFile* file, void* buffer, uint32_t size, uint32_t* bytes_read) {
+    if (!file || !buffer || !bytes_read) {
+        return 0;
+    }
+
+    if (!file->filesystem) {
+        return 0;
+    }
+
+    if (file->filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_read_file(file, buffer, size, bytes_read);
+    }
+
+    return 0;
+}
+
+int filesystem_write(FilesystemFile* file, const void* buffer, uint32_t size, uint32_t* bytes_written) {
+    if (!file || !file->filesystem || !buffer || !bytes_written) {
+        return 0;
+    }
+
+    if (file->filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_write_file(file, buffer, size, bytes_written);
+    }
+
+    return 0;
+}
+
+int filesystem_seek(FilesystemFile* file, int64_t offset, FilesystemSeekWhence whence) {
+    if (!file || !file->filesystem || file->is_directory) {
+        return 0;
+    }
+
+    int64_t base;
+
+    switch (whence) {
+        case FILESYSTEM_SEEK_SET:
+            base = 0;
+            break;
+
+        case FILESYSTEM_SEEK_CURRENT:
+            if (file->position > INT64_MAX) {
+                return 0;
+            }
+
+            base = (int64_t)file->position;
+            break;
+
+        case FILESYSTEM_SEEK_END:
+            if (file->size > INT64_MAX) {
+                return 0;
+            }
+
+            base = (int64_t)file->size;
+            break;
+
+        default:
+            return 0;
+    }
+
+    if (offset < 0 && base < -offset) {
+        return 0;
+    }
+
+    int64_t new_position = base + offset;
+
+    if (new_position < 0) {
+        return 0;
+    }
+
+    file->position = (uint64_t)new_position;
+    return 1;
+}
+
+int filesystem_close(FilesystemFile* file) {
+    if (!file) {
+        return 0;
+    }
+
+    file->filesystem = 0;
+    file->first_cluster = 0;
+    file->size = 0;
+    file->position = 0;
+    file->directory_lba = 0;
+    file->directory_offset = 0;
+    file->is_directory = 0;
+    return 1;
+}
+
+int filesystem_open_path(Filesystem* filesystem, const char* path, FilesystemFile* file) {
+    if (!filesystem || !path || !file) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_open_path(filesystem, path, file);
+    }
+
+    return 0;
+}
+
+int filesystem_create_directory_path(Filesystem* filesystem, const char* path) {
+    if (!filesystem || !path) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_create_directory_path(filesystem, path);
+    }
+
+    return 0;
+}
+
+int filesystem_create_file_path(Filesystem* filesystem, const char* path) {
+    if (!filesystem || !path) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_create_file_path(filesystem, path);
+    }
+
+    return 0;
+}
+
+int filesystem_delete_directory(Filesystem* filesystem, const char* path) {
+    if (!filesystem || !path) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_delete_directory(filesystem, path);
+    }
+
+    return 0;
+}
+
+int filesystem_delete_file(Filesystem* filesystem, const char* path) {
+    if (!filesystem || !path) {
+        return 0;
+    }
+
+    if (filesystem->type == FILESYSTEM_FAT32) {
+        return fat32_delete_file(filesystem, path);
+    }
+
+    return 0;
+}

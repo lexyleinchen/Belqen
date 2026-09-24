@@ -10,15 +10,11 @@ int block_read(BlockDevice* device, uint64_t lba, uint32_t count, void* buffer) 
         return 0;
     }
 
-    if (lba >= device->sector_count) {
-        return 0;
-    }
-
     if (count == 0) {
         return 1;
     }
 
-    if (lba + count > device->sector_count) {
+    if (lba >= device->sector_count || count > device->sector_count - lba) {
         return 0;
     }
 
@@ -30,15 +26,11 @@ int block_write(BlockDevice* device, uint64_t lba, uint32_t count, const void* b
         return 0;
     }
 
-    if (lba >= device->sector_count) {
-        return 0;
-    }
-
     if (count == 0) {
         return 1;
     }
 
-    if (lba + count > device->sector_count) {
+    if (lba >= device->sector_count || count > device->sector_count - lba) {
         return 0;
     }
 

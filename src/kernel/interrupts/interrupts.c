@@ -3,6 +3,7 @@
 #include "../inputs/keyboard.h"
 #include "../memory/vmm.h"
 #include "../core/scheduler.h"
+#include "../core/syscall.h"
 #include "../core/log.h"
 
 #define IDT_ENTRY_COUNT 256
@@ -38,10 +39,26 @@ typedef struct {
 
 typedef void (*InterruptStub)(void);
 
+typedef struct {
+    uint32_t reserved0;
+    uint64_t rsp0;
+    uint64_t rsp1;
+    uint64_t rsp2;
+    uint64_t reserved1;
+    uint64_t ist[7];
+    uint64_t reserved2;
+    uint16_t reserved3;
+    uint16_t iomap_base;
+} __attribute__((packed)) Tss64;
+
 extern void interrupts_load_idt(const Idtr* idtr);
 extern void isr_default(void);
 extern uint8_t stack_bottom[];
 extern uint8_t stack_top[];
+extern uint8_t tss64[];
+extern uint8_t gdt_tss[];
+extern void load_tss(void);
+extern void isr128(void);
 
 DECLARE_ISR(0);
 DECLARE_ISR(1);
@@ -211,6 +228,11 @@ static void idt_set_gate(uint8_t vector, InterruptStub handler) {
     idt[vector].offset_middle = (address >> 16) & 0xFFFF;
     idt[vector].offset_high = (address >> 32) & 0xFFFFFFFF;
     idt[vector].reserved = 0;
+}
+
+static void idt_set_user_gate(uint8_t vector, InterruptStub handler) {
+    idt_set_gate(vector, handler);
+    idt[vector].type_attributes = 0xEE;
 }
 
 static void pic_remap(void) {
@@ -445,9 +467,37 @@ static void exception_control_protection(InterruptFrame* frame) {
     kernel_panic("control protection exception");
 }
 
+static void tss_init(void) {
+    Tss64* tss = (Tss64*)tss64;
+    uint64_t base = (uint64_t)tss64;
+    uint32_t limit = sizeof(Tss64) - 1;
+
+    for (uint32_t i = 0; i < 104; i++) {
+        tss64[i] = 0;
+    }
+
+    tss->rsp0 = (uint64_t)stack_top;
+    tss->iomap_base = sizeof(Tss64);
+    gdt_tss[0] = limit & 0xFF;
+    gdt_tss[1] = (limit >> 8) & 0xFF;
+    gdt_tss[2] = base & 0xFF;
+    gdt_tss[3] = (base >> 8) & 0xFF;
+    gdt_tss[4] = (base >> 16) & 0xFF;
+    gdt_tss[5] = 0x89;
+    gdt_tss[6] = (limit >> 16) & 0x0F;
+    gdt_tss[6] |= (base >> 24) & 0xF0;
+    gdt_tss[7] = (base >> 24) & 0xFF;
+    gdt_tss[8] = (base >> 32) & 0xFF;
+    gdt_tss[9] = (base >> 40) & 0xFF;
+    gdt_tss[10] = (base >> 48) & 0xFF;
+    gdt_tss[11] =  (base >> 56) & 0xFF;
+    load_tss();
+}
+
 void interrupts_init(void) {
     Idtr idtr;
     interrupts_disable();
+    tss_init();
 
     for (uint32_t i = 0; i < IDT_ENTRY_COUNT; i++) {
         idt[i].offset_low = 0;
@@ -468,6 +518,7 @@ void interrupts_init(void) {
     }
 
     idt_set_gate(64, isr64);
+    idt_set_user_gate(SYSCALL_VECTOR, isr128);
     idtr.limit = sizeof(idt) - 1;
     idtr.base = (uint64_t)&idt[0];
     interrupts_load_idt(&idtr);
@@ -496,6 +547,11 @@ void interrupt_dispatch(InterruptFrame* frame) {
         kernel_panic("interrupt frame was null.");
     }
 
+    if (frame->vector == SYSCALL_VECTOR) {
+        frame->rax = syscall_dispatch(frame);
+        return;
+    }
+
     if (frame->vector < 32) {
         const char* name = exception_names[frame->vector];
         kernel_log("Cpu exception %u %s", (uint32_t)frame->vector, name);
@@ -504,66 +560,87 @@ void interrupt_dispatch(InterruptFrame* frame) {
             case 0: 
                 exception_divide_by_zero(frame);
                 break;
+
             case 1: 
                 exception_debug(frame);
                 break;
+
             case 2: 
                 exception_nmi(frame);
                 break;
+
             case 3: 
                 exception_breakpoint(frame);
                 break;
+
             case 4: 
                 exception_overflow(frame);
                 break;
+
             case 5: 
                 exception_bound_range(frame);
                 break;
+
             case 6: 
                 exception_invalid_opcode(frame);
                 break;
+
             case 7: 
                 exception_device_not_available(frame);
                 break;
+
             case 8: 
                 exception_double_fault(frame);
                 break;
+
             case 9: 
                 exception_coprocessor_overrun(frame);
                 break;
+
             case 10: 
                 exception_invalid_tss(frame);
                 break;
+
             case 11: 
                 exception_segment_not_present(frame);
                 break;
+
             case 12: 
                 exception_stack_fault(frame);
                 break;
+
             case 13: 
                 exception_general_protection_fault(frame);
                 break;
+
             case 14: 
                 exception_page_fault(frame);
                 break;
+
             case 16: 
                 exception_x87_fpu(frame);
                 break;
+
             case 17: 
                 exception_alignment_check(frame);
                 break;
+
             case 18: 
                 exception_machine_check(frame);
                 break;
+
             case 19: 
                 exception_simd_fpu(frame);
                 break;
+
             case 20: 
                 exception_virtualization(frame);
                 break;
+
             case 21: 
                 exception_control_protection(frame);
                 break;
+
             default:
                 kernel_log("Unhandled cpu exception %u", (uint32_t)frame->vector);
                 exception_print_registers(frame);
@@ -699,6 +776,7 @@ void kernel_panic(const char* reason) {
     interrupts_disable();
     kernel_log("KERNEL PANIC %s", reason);
     kernel_stack_trace();
+    log_dump_serial();
     
     while (1) {
         __asm__ volatile ("hlt");

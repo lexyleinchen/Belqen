@@ -301,3 +301,48 @@ int address_space_unmap(AddressSpace* space, uint64_t virtual_address) {
 AddressSpace* address_space_current(void) {
     return current_space;
 }
+
+int address_space_validate_user_buffer(AddressSpace* space, uint64_t address, uint64_t size, uint64_t required_flags) {
+    if (!space) {
+        return 0;
+    }
+
+    if (size == 0) {
+        return address >= USER_SPACE_START && address < USER_SPACE_END;
+    }
+
+    if (address < USER_SPACE_START || address >= USER_SPACE_END || size > USER_SPACE_END - address) {
+        return 0;
+    }
+
+    uint64_t first_page = address & ~(VMM_PAGE_SIZE -1);
+    uint64_t last_page = (address + size - 1) & ~(VMM_PAGE_SIZE - 1);
+    uint64_t old_directory = vmm_get_current_directory();
+    vmm_switch_directory(space->directory);
+
+    for (uint64_t page = first_page; page <= last_page; page += VMM_PAGE_SIZE) {
+        uint64_t region_flags = 0;
+
+        if (!address_space_contains(space, page, &region_flags)) {
+            vmm_switch_directory(old_directory);
+            return 0;
+        }
+
+        if ((region_flags & required_flags) != required_flags) {
+            vmm_switch_directory(old_directory);
+            return 0;
+        }
+
+        if (!vmm_get_physical_address(page)) {
+            vmm_switch_directory(old_directory);
+            return 0;
+        }
+
+        if (page > UINT64_MAX - VMM_PAGE_SIZE) {
+            break;
+        }
+    }
+
+    vmm_switch_directory(old_directory);
+    return 1;
+}

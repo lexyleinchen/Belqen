@@ -10,6 +10,8 @@ extern "C" {
 #define THREAD_MAX_COUNT 128
 #define THREAD_KERNEL_STACK_SIZE 16384
 #define THREAD_USER_STACK_SIZE 4096
+#define THREAD_FLAG_USER 0x00000001
+#define THREAD_USER_STACK_TOP 0x00007FFFFFFFE000ULL
 
 typedef enum {
     THREAD_STATE_NEW = 0,
@@ -67,11 +69,15 @@ void thread_init(void);
 
 Thread* thread_create(struct Process* process, const char* name, void* entry, void* arg, uint32_t priority);
 
+Thread* thread_create_user(struct Process* process, const char* name, void* entry, uint32_t priority);
+
 Thread* thread_find_by_tid(uint32_t tid);
 
 void thread_set_state(Thread* thread, ThreadState state);
 
 void thread_yield(void);
+
+void thread_mark_exit(uint32_t exit_code);
 
 void thread_exit(void);
 

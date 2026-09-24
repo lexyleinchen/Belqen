@@ -38,6 +38,8 @@ int address_space_contains(AddressSpace* space, uint64_t address, uint64_t* flag
 
 int address_space_unmap(AddressSpace* space, uint64_t virtual_address);
 
+int address_space_validate_user_buffer(AddressSpace* space, uint64_t address, uint64_t size, uint64_t required_flags);
+
 AddressSpace* address_space_current(void);
 
 #ifdef __cplusplus
