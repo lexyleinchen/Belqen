@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/lexyleinchen/Belqen/security
+    about: Do not report security vulnerabilities publicly. Use GitHub Private Vulnerability Reporting from the Security tab.
+  - name: Discussions
+    url: https://github.com/lexyleinchen/Belqen/discussions
+    about: Use Discussions for questions, ideas, and topics that are not actionable issues.
