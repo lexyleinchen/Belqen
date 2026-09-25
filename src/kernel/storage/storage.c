@@ -1,5 +1,6 @@
 #include "storage.h"
 #include "block.h"
+#include "vfs.h"
 #include "partition/partition.h"
 #include "../interrupts/interrupts.h"
 #include "../core/log.h"
@@ -128,7 +129,7 @@ static void storage_create_directory_tree(void) {
         "/system/apps/diskmanager",
         "/system/apps/logs",
         "/users",
-        "/user/belqen",
+        "/users/belqen",
         "/users/belqen/desktop",
         "/users/belqen/documents",
         "/users/belqen/downloads",
@@ -209,6 +210,15 @@ void storage_init(void) {
     }
 
     kernel_log("mounted filesystems %u", storage_filesystem_count);
+
+    if (storage_filesystem_count > 0) {
+        if (!vfs_mount_root(&storage_filesystems[0])) {
+            kernel_panic("mounting root filesystem failed");
+        }
+
+        kernel_log("Root filesystem mounted.");
+    }
+
     kernel_log("block devices after partition scan %u", block_get_device_count());
     kernel_log("storage initialized.");
     storage_test();
@@ -283,4 +293,8 @@ int storage_unmount_partition(BlockDevice* partition) {
     }
 
     return 0;
+}
+
+int storage_mount_root(Filesystem* filesystem) {
+    return vfs_mount_root(filesystem);
 }

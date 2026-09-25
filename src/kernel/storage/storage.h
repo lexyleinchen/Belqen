@@ -19,6 +19,8 @@ int storage_mount_partition(BlockDevice* partition);
 
 int storage_unmount_partition(BlockDevice* partition);
 
+int storage_mount_root(Filesystem* filesystem);
+
 #ifdef __cplusplus
 }
 #endif
