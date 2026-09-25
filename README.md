@@ -200,11 +200,27 @@ Belqen is independently developed as a custom operating system and kernel projec
 
 ## AI Documentation Disclosure
 
-Parts of the project documentation, including this README and the custom license, were drafted with assistance from generative AI.
+Parts of the Belqen project documentation and repository support files were drafted with assistance from generative AI.
 
-This disclosure applies **only to documentation drafting**.
+This includes:
 
-The Belqen source code itself remains **100% human-written** and was created by the Author without generative AI, AI coding assistants, or AI-generated code.
+* `README.md`
+* `LICENSE`
+* `SECURITY.md`
+* `CODE_OF_CONDUCT.md`
+* `CONTRIBUTING.md`
+* GitHub issue templates
+* GitHub pull request templates
+
+Generative AI assistance was used **only for documentation, wording, structure, and related non-source-code text**.
+
+All AI-assisted text was reviewed by the Author, **lexyleinchen**, and was edited, revised, or otherwise adjusted where necessary before being included in the project.
+
+This disclosure applies **only to documentation, repository metadata, templates, and other non-source-code text**.
+
+The Belqen source code itself remains **100% human-written** and was created by the Author, **lexyleinchen**, without the use of generative AI, AI coding assistants, or AI-generated source code.
+
+No AI-generated source code or AI-generated source-code modifications have been added to Belqen.
 
 ## Copyright
 
