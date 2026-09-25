@@ -98,8 +98,8 @@ void graphics_present() {
     }
 
     for (uint32_t y = 0; y < graphics.height; y++) {
-        uint32_t* destination = graphics.framebuffer + (y * graphics.pitch / sizeof(uint32_t));
-        uint32_t* source = backbuffer + (y * BACKBUFFER_WIDTH);
+        uint32_t* destination = graphics.framebuffer + (static_cast<uintptr_t>(y) * graphics.pitch / sizeof(uint32_t));
+        uint32_t* source = backbuffer + (static_cast<uintptr_t>(y) * BACKBUFFER_WIDTH);
 
         for (uint32_t x = 0; x < graphics.width; x++) {
             destination[x] = source[x];
