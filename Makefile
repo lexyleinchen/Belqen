@@ -101,6 +101,9 @@ build/block.o: src/kernel/storage/block.c | build
 build/storage.o: src/kernel/storage/storage.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
+build/vfs.o: src/kernel/storage/vfs.c | build
+	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
+
 build/partition.o: src/kernel/storage/partition/partition.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -212,6 +215,7 @@ $(KERNEL): build/boot.o \
 		build/framebuffer_console.o \
 		build/block.o \
 		build/storage.o \
+		build/vfs.o \
 		build/partition.o \
 		build/filesystem.o \
 		build/fat32.o \
