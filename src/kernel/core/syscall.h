@@ -16,6 +16,10 @@ struct InterruptFrame;
 #define SYSCALL_WRITE 3
 #define SYSCALL_IPC_SEND 4
 #define SYSCALL_IPC_RECEIVE 5
+#define SYSCALL_OPEN 6
+#define SYSCALL_READ 7
+#define SYSCALL_SEEK 8
+#define SYSCALL_CLOSE 9
 #define SYSCALL_SUCCESS 0
 #define SYSCALL_ERROR UINT64_MAX
 

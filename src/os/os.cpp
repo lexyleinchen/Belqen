@@ -31,7 +31,7 @@ void os_init(void) {
     desktop_init();
     taskbar_init();
 
-    kernel_log("os started.");
+    kernel_log("os initialized.");
 }
 
 extern "C"

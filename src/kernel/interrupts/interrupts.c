@@ -232,7 +232,7 @@ static void idt_set_gate(uint8_t vector, InterruptStub handler) {
 
 static void idt_set_user_gate(uint8_t vector, InterruptStub handler) {
     idt_set_gate(vector, handler);
-    idt[vector].type_attributes = 0xEE;
+    idt[vector].type_attributes = 0xEF;
 }
 
 static void pic_remap(void) {

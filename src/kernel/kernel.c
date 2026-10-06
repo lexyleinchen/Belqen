@@ -28,41 +28,106 @@
 #include "network/udp/udp.h"
 #include "network/dhcp/dhcp.h"
 #include "storage/storage.h"
+#include "storage/vfs.h"
 #include "inputs/keyboard.h"
 #include "inputs/mouse.h"
 #include "../os/os.h"
 
 static Process* ring3_test_process;
+static int ring3_test_is_fd_smoke;
+static int kernel_started = 0;
+
+extern const uint8_t ring3_basic_start[];
+extern const uint8_t ring3_basic_end[];
+extern const uint8_t fd_smoke_start[];
+extern const uint8_t fd_smoke_end[];
 
 static void kernel_loop_thread(void* arg) {
     while (1) {
-        keyboard_process();
-        usb_poll();
-        os_draw();
-        e1000_poll();
+        if (kernel_started) {
+            keyboard_process();
+            usb_poll();
+            os_draw();
+            e1000_poll();
+        }
+        else {
+            if (ring3_test_process && ring3_test_process->state == PROCESS_STATE_ZOMBIE) {
 
-        if (ring3_test_process && ring3_test_process->state == PROCESS_STATE_ZOMBIE) {
-            ring3_test_process = 0;
-            kernel_log("Ring 3 test exited.");
-            log_disable_console();
-            log_dump_serial();
+                if (ring3_test_is_fd_smoke) {
+                    int descriptors_closed = 1;
+
+                    for (uint32_t fd = 3; fd < PROCESS_MAX_FILE_DESCRIPTORS; fd++) {
+                        if (ring3_test_process->file_descriptors[fd].used) {
+                            descriptors_closed = 0;
+                            break;
+                        }
+                    }
+
+                    kernel_log(descriptors_closed ? "File descriptor exit cleanup passed." : "File descriptor exit cleanup failed.");
+                }
+
+                ring3_test_process = 0;
+                kernel_log("Ring 3 test exited.");
+                kernel_log("kernel started.");
+                log_disable_console();
+                log_dump_serial();
+                kernel_started = 1;
+            }
         }
 
         thread_yield();
     }
 }
 
+static void fd_smoke_prepare_file(void) {
+    const char* path = "/fd-smoke-test.txt";
+    FilesystemFile file;
+
+    if (vfs_open_path(path, &file)) {
+        vfs_close(&file);
+
+        if (!vfs_delete_file(path)) {
+            kernel_panic("file descriptor smoke test could not remove old fixture");
+        }
+    }
+
+    if (!vfs_create_file_path(path) || !vfs_open_path(path, &file)) {
+        kernel_panic("file descriptor smoke test could not create fixture");
+    }
+
+    static const char contents[] = "before";
+    uint32_t bytes_written = 0;
+
+    if (!vfs_write(&file, contents, 6, &bytes_written) || bytes_written != 6) {
+        vfs_close(&file);
+        kernel_panic("file descriptor smoke test could not write fixture");
+    }
+
+    vfs_close(&file);
+}
+
 static void ring3_test(void) {
-    static const uint8_t user_code[] = {
-        0xB8, 0x00, 0x00, 0x00, 0x00,
-        0xCD, 0x80,
-        0xB8, 0x02, 0x00, 0x00, 0x00,
-        0x31, 0xFF,
-        0xCD, 0x80
-    };
+    int run_fd_smoke = storage_get_filesystem_count() > 0;
+    const uint8_t* image_start = ring3_basic_start;
+    const uint8_t* image_end = ring3_basic_end;
+
+    if (run_fd_smoke) {
+        fd_smoke_prepare_file();
+        image_start = fd_smoke_start;
+        image_end = fd_smoke_end;
+    }
+    else {
+        kernel_log("No filesystem we will run basic ring 3 test.");
+    }
 
     const uint64_t user_entry = USER_SPACE_START;
-    const uint64_t code_size = VMM_PAGE_SIZE;
+    const uint64_t user_buffer = USER_SPACE_START + VMM_PAGE_SIZE;
+    const uint64_t code_bytes = (uint64_t)(image_end - image_start);
+
+    if (code_bytes > VMM_PAGE_SIZE) {
+        kernel_panic("ring 3 image is too large");
+    }
+
     Process* process = process_create_user("ring3_test");
 
     if (!process) {
@@ -71,7 +136,7 @@ static void ring3_test(void) {
 
     AddressSpace* address_space = (AddressSpace*)process->address_space;
 
-    if (!address_space_add_region(address_space, user_entry, code_size, 0)) {
+    if (!address_space_add_region(address_space, user_entry, VMM_PAGE_SIZE, 0)) {
         kernel_panic("ring 3 code region creation failed");
     }
 
@@ -85,12 +150,24 @@ static void ring3_test(void) {
         kernel_panic("ring 3 code page mapping failed");
     }
 
+    if (run_fd_smoke) {
+        if (!address_space_add_region(address_space, user_buffer, VMM_PAGE_SIZE, VMM_WRITABLE)) {
+            kernel_panic("file descriptor smoke test buffer region creation failed");
+        }
+
+        uint64_t buffer_physical = pmm_allocate_page();
+
+        if (!buffer_physical || !address_space_map(address_space, user_buffer, buffer_physical, VMM_WRITABLE)) {
+            kernel_panic("file descriptor smoke test buffer mapping failed");
+        }
+    }
+
     uint64_t irq_flags = irq_save();
     uint64_t old_directory = vmm_get_current_directory();
     vmm_switch_directory(address_space->directory);
 
-    for (uint64_t i = 0; i < sizeof(user_code); i++) {
-        ((uint8_t*)(uintptr_t)user_entry)[i] = user_code[i];
+    for (uint64_t i = 0; i < code_bytes; i++) {
+        ((uint8_t*)(uintptr_t)user_entry)[i] = image_start[i];
     }
 
     vmm_switch_directory(old_directory);
@@ -103,7 +180,8 @@ static void ring3_test(void) {
 
     process_set_state(process, PROCESS_STATE_READY);
     ring3_test_process = process;
-    kernel_log("Ring 3 test queued.");
+    ring3_test_is_fd_smoke = run_fd_smoke;
+    kernel_log(run_fd_smoke ? "File descriptor ring 3 test queued." : "Basic ring 3 test queued.");
 }
 
 void kernel_main(uint32_t multiboot_address) {
@@ -137,10 +215,9 @@ void kernel_main(uint32_t multiboot_address) {
     storage_init();
     ps2_init();
     os_init();
-    kernel_log("kernel started.");
+    ring3_test();
     Process* kernel_process = process_create("kernel");
     thread_create(kernel_process, "kernel_loop", (void*)kernel_loop_thread, 0, 1);
-    ring3_test();
 
     while (1) {
         __asm__ volatile ("hlt");

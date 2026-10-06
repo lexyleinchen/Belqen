@@ -83,6 +83,9 @@ build/syscall.o: src/kernel/core/syscall.c | build
 build/task_switch.o: src/kernel/core/task_switch.asm | build
 	$(AS) -f elf64 $< -o $@
 
+build/fd_smoke_test.o: src/kernel/core/fd_smoke_test.asm | build
+	$(AS) -f elf64 $< -o $@
+
 build/task.o: src/kernel/core/task.c | build
 	$(CC) $(CFLAGS) -Isrc/kernel -c $< -o $@
 
@@ -209,6 +212,7 @@ $(KERNEL): build/boot.o \
 		build/scheduler.o \
 		build/syscall.o \
 		build/task_switch.o \
+		build/fd_smoke_test.o \
 		build/task.o \
 		build/thread.o \
 		build/framebuffer.o \

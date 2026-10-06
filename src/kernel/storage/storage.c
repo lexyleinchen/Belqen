@@ -123,7 +123,9 @@ static void storage_create_directory_tree(void) {
         "/system/apps/terminal",
         "/system/apps/filebrowser",
         "/system/apps/diskmanager",
+        "/system/apps/processmanager",
         "/system/apps/logs",
+        "/system/logs"
         "/users",
         "/users/belqen",
         "/users/belqen/desktop",
@@ -134,7 +136,6 @@ static void storage_create_directory_tree(void) {
         "/users/belqen/videos",
         "/apps",
         "/games",
-        "/logs",
         "/cache",
         "/temp"
     };

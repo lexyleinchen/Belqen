@@ -1,5 +1,6 @@
 #include "process.h"
 #include "../memory/address_space.h"
+#include "../storage/vfs.h"
 
 static Process processes[PROCESS_MAX_COUNT];
 static Process* process_head = 0;
@@ -110,6 +111,10 @@ void process_init(void) {
         processes[i].flags = 0;
         processes[i].next = 0;
         processes[i].previous = 0;
+
+        for (uint32_t fd = 0; fd < PROCESS_MAX_FILE_DESCRIPTORS; fd++) {
+            processes[i].file_descriptors[fd].used = 0;
+        }
     }
 
     process_head = 0;
@@ -156,6 +161,10 @@ Process* process_create(const char* name) {
         process->parent->children[process->parent->child_count++] = process;
     }
 
+    for (uint32_t fd = 0; fd < PROCESS_MAX_FILE_DESCRIPTORS; fd++) {
+        process->file_descriptors[fd].used = 0;
+    }
+
     process_enqueue(process);
     return process;
 }
@@ -197,11 +206,84 @@ void process_set_state(Process* process, ProcessState state) {
     process->state = state;
 }
 
+void process_close_descriptors(Process* process) {
+    if (!process) {
+        return;
+    }
+
+    for (uint32_t fd = 3; fd < PROCESS_MAX_FILE_DESCRIPTORS; fd++) {
+        ProcessFileDescriptor* descriptor = &process->file_descriptors[fd];
+
+        if (descriptor->used) {
+            vfs_close(&descriptor->file);
+            descriptor->used = 0;
+        }
+    }
+}
+
 void process_exit(Process* process, uint32_t exit_code) {
     if (!process) {
         return;
     }
 
+    process_close_descriptors(process);
     process->state = PROCESS_STATE_ZOMBIE;
     process->exit_code = exit_code;
+}
+
+int process_fd_open(Process* process, const char* path) {
+    if (!process || !path) {
+        return -1;
+    }
+
+    for (uint32_t fd = 3; fd < PROCESS_MAX_FILE_DESCRIPTORS; fd++) {
+        ProcessFileDescriptor* descriptor = &process->file_descriptors[fd];
+
+        if (descriptor->used) {
+            continue;
+        }
+
+        if (!vfs_open_path(path, &descriptor->file)) {
+            return -1;
+        }
+
+        descriptor->used = 1;
+        return(int)fd;
+    }
+
+    return -1;
+}
+
+int process_fd_close(Process* process, uint32_t file_descriptor) {
+    if (!process || file_descriptor < 3 ||  file_descriptor >= PROCESS_MAX_FILE_DESCRIPTORS || !process->file_descriptors[file_descriptor].used) {
+        return 0;
+    }
+
+    vfs_close(&process->file_descriptors[file_descriptor].file);
+    process->file_descriptors[file_descriptor].used = 0;
+    return 1;
+}
+
+int process_fd_read(Process* process, uint32_t file_descriptor, void* buffer, uint32_t size, uint32_t* bytes_read) {
+    if (!process || file_descriptor < 3 || file_descriptor >= PROCESS_MAX_FILE_DESCRIPTORS || !process->file_descriptors[file_descriptor].used) {
+        return 0;
+    }
+
+    return vfs_read(&process->file_descriptors[file_descriptor].file, buffer, size, bytes_read);
+}
+
+int process_fd_write(Process* process, uint32_t file_descriptor, const void* buffer, uint32_t size, uint32_t* bytes_written) {
+    if (!process || file_descriptor < 3 || file_descriptor >= PROCESS_MAX_FILE_DESCRIPTORS || !process->file_descriptors[file_descriptor].used) {
+        return 0;
+    }
+
+    return vfs_write(&process->file_descriptors[file_descriptor].file, buffer, size, bytes_written);
+}
+
+int process_fd_seek(Process* process, uint32_t file_descriptor, int64_t offset, FilesystemSeekWhence whence) {
+    if (!process || file_descriptor < 3 || file_descriptor >= PROCESS_MAX_FILE_DESCRIPTORS || !process->file_descriptors[file_descriptor].used) {
+        return 0;
+    }
+
+    return vfs_seek(&process->file_descriptors[file_descriptor].file, offset, whence);
 }
