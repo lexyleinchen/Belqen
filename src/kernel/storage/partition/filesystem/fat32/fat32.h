@@ -58,7 +58,7 @@ uint32_t fat32_format_get_percent(FAT32FormatWork* work);
 
 int fat32_create_directory(Filesystem* filesystem, uint32_t parent_cluster, const char* name);
 
-int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
+int fat32_read_directory_at(Filesystem* filesystem, uint32_t cluster, uint32_t start_index, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
 
 int fat32_create_file(Filesystem* filesystem, uint32_t parent_cluster, const char* name);
 

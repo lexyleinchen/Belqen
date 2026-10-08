@@ -22,6 +22,12 @@ typedef struct {
     uint32_t mount_count;
 } Vfs;
 
+typedef struct {
+    Filesystem* filesystem;
+    uint32_t cluster;
+    uint32_t position;
+} VfsDirectory;
+
 void vfs_init(void);
 
 int vfs_mount_root(Filesystem* filesystem);
@@ -47,6 +53,12 @@ int vfs_write(FilesystemFile* file, const void* buffer, uint32_t size, uint32_t*
 int vfs_seek(FilesystemFile* file, int64_t offset, FilesystemSeekWhence whence);
 
 int vfs_close(FilesystemFile* file);
+
+int vfs_open_directory(const char* path, VfsDirectory* directory);
+
+int vfs_read_directory(VfsDirectory* directory, FilesystemEntry* entry, uint8_t* has_entry);
+
+int vfs_close_directory(VfsDirectory* directory);
 
 #ifdef __cplusplus
 }

@@ -10,45 +10,31 @@
 static Filesystem storage_filesystems[MAX_STORAGE_FILESYSTEMS];
 static uint32_t storage_filesystem_count = 0;
 
-static void storage_test_path() {
-    FilesystemFile file;
+static int storage_name_equals(const char* left, const char* right) {
+    uint32_t i = 0;
 
-    if (!vfs_open_path("/system/test", &file)) {
-        kernel_log("Test path does not exist! creating it...");
-
-        if (!vfs_create_directory_path("/system/test")) {
-            kernel_panic("path creating failed");
+    while (left[i] != '\0' && right[i] != '\0') {
+        if (left[i] != right[i]) {
+            return 0;
         }
 
-        if (!vfs_open_path("/system/test", &file)) {
-            kernel_panic("created path cannot be opened");
-        }
+        i++;
     }
 
-    if (!file.is_directory) {
-        vfs_close(&file);
-        kernel_panic("file is not a directory");
-    }
-
-    if (!vfs_delete_directory("/system/test")) {
-        kernel_panic("deleting directory failed");
-    }
-
-    vfs_close(&file);
-    kernel_log("Nested path test passed.");
+    return left[i] == right[i];
 }
 
 static void storage_test_file() {
     FilesystemFile file;
 
-    if (!vfs_open_path("/test.txt", &file)) {
+    if (!vfs_open_path("/system/test/test.txt", &file)) {
         kernel_log("Test.txt does not exist! creating it...");
 
-        if (!vfs_create_file_path("/test.txt")) {
+        if (!vfs_create_file_path("/system/test/test.txt")) {
             kernel_panic("file creation failed");
         }
 
-        if (!vfs_open_path("/test.txt", &file)) {
+        if (!vfs_open_path("/system/test/test.txt", &file)) {
             kernel_panic("created file cannot be opened");
         }
     }
@@ -93,12 +79,7 @@ static void storage_test_file() {
         }
     }
 
-    if (!vfs_delete_file("/test.txt")) {
-        kernel_panic("deleting file failed");
-    }
-
     vfs_close(&file);
-    kernel_log("Storage file test passed.");
 }
 
 static void storage_test(void) {
@@ -107,8 +88,79 @@ static void storage_test(void) {
         return;
     }
 
-    storage_test_path();
+    VfsDirectory directory;
+    FilesystemEntry entry;
+    uint8_t has_entry = 0;
+
+    if (!vfs_open_directory("/system/test", &directory)) {
+        kernel_log("Test directory does not exist! creating it...");
+
+        if (!vfs_create_directory_path("/system/test")) {
+            kernel_panic("creating directory failed");
+        }
+
+        if (!vfs_open_directory("/system/test", &directory)) {
+            kernel_panic("created directory cannot be opened");
+        }
+    }
+    else {
+        kernel_log("Test directory does exist! recreating it...");
+
+        if (!vfs_delete_directory("/system/test")) {
+            kernel_panic("deleting directory failed");
+        }
+
+        if (!vfs_create_directory_path("/system/test")) {
+            kernel_panic("creating directory failed");
+        }
+
+        if (!vfs_open_directory("/system/test", &directory)) {
+            kernel_panic("created directory cannot be opened");
+        }
+    }
+
+    if (!vfs_read_directory(&directory, &entry, &has_entry)) {
+        vfs_close_directory(&directory);
+        kernel_panic("reading directory failed");
+    }
+
+    if (has_entry) {
+        vfs_close_directory(&directory);
+        kernel_panic("test directory is not empty");
+    }
+
+    if (!vfs_close_directory(&directory)) {
+        kernel_panic("closing directory failed");
+    }
+
     storage_test_file();
+
+    if (!vfs_open_directory("/system/test", &directory)) {
+        kernel_panic("opening directory failed");
+    }
+
+    if (!vfs_read_directory(&directory, &entry, &has_entry) || !has_entry || entry.is_directory || !storage_name_equals(entry.name, "test.txt")) {
+        kernel_panic("reading directory entry failed");
+    }
+
+    if (!vfs_read_directory(&directory, &entry, &has_entry) || has_entry) {
+        vfs_close_directory(&directory);
+        kernel_panic("directory cursor or end of directory failed");
+    }
+
+    if (!vfs_close_directory(&directory)) {
+        kernel_panic("closing directory failed");
+    }
+
+    if (!vfs_delete_file("/system/test/test.txt")) {
+        kernel_panic("deleting file failed");
+    }
+
+    if (!vfs_delete_directory("/system/test")) {
+        kernel_panic("deleting directory failed");
+    }
+
+    kernel_log("Storage tests passed.");
 }
 
 static void storage_create_directory_tree(void) {
@@ -125,7 +177,7 @@ static void storage_create_directory_tree(void) {
         "/system/apps/diskmanager",
         "/system/apps/processmanager",
         "/system/apps/logs",
-        "/system/logs"
+        "/system/logs",
         "/users",
         "/users/belqen",
         "/users/belqen/desktop",
@@ -143,6 +195,20 @@ static void storage_create_directory_tree(void) {
     uint32_t count = sizeof(directories) / sizeof(directories[0]);
 
     for (uint32_t i = 0; i < count; i++) {
+        FilesystemFile existing;
+
+        if (vfs_open_path(directories[i], &existing)) {
+            int is_directory = existing.is_directory;
+            vfs_close(&existing);
+
+            if (!is_directory) {
+                kernel_log("Path %s exsist but is not a directory", directories[i]);
+                kernel_panic("invalid directory tree");
+            }
+
+            continue;
+        }
+
         if (!vfs_create_directory_path(directories[i])) {
             kernel_log("Could not create directory %s", directories[i]);
             kernel_panic("failed to create directory tree");

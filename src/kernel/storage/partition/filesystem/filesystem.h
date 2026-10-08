@@ -45,7 +45,7 @@ typedef enum {
 
 int filesystem_mount(BlockDevice* device, Filesystem* filesystem);
 
-int filesystem_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
+int filesystem_read_directory_at(Filesystem* filesystem, uint32_t cluster, uint32_t start_index, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count);
 
 uint32_t filesystem_get_count(void);
 

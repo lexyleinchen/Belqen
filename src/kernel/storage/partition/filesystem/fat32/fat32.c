@@ -1457,8 +1457,8 @@ int fat32_create_directory(Filesystem* filesystem, uint32_t parent_cluster, cons
     return fat32_create_name_entry(filesystem, parent_cluster, name, 1);
 }
 
-int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count) {
-    if (!filesystem || !entries || !entry_count) {
+int fat32_read_directory_at(Filesystem* filesystem, uint32_t cluster, uint32_t start_index, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count) {
+        if (!filesystem || !entries || !entry_count) {
         return 0;
     }
 
@@ -1468,6 +1468,12 @@ int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEnt
     if (!fat32) {
         return 0;
     }
+
+    if (max_entries == 0) {
+        return 1;
+    }
+
+    uint32_t entry_index = 0;
 
     if (cluster < 2) {
         cluster = fat32->root_cluster;
@@ -1528,6 +1534,13 @@ int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEnt
                     continue;
                 }
 
+                if (entry_index < start_index) {
+                    entry_index++;
+                    long_name_active = 0;
+                    fat32_lfn_clear(long_name);
+                    continue;
+                }
+
                 if (*entry_count >= max_entries) {
                     return 1;
                 }
@@ -1561,6 +1574,7 @@ int fat32_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEnt
                 output->cluster = (high << 16) | low;
                 output->size = read_u32_le(&entry[28]);
                 (*entry_count)++;
+                entry_index++;
                 long_name_active = 0;
                 fat32_lfn_clear(long_name);
             }
@@ -1859,7 +1873,14 @@ int fat32_open_path(Filesystem* filesystem, const char* path, FilesystemFile* fi
     }
 
     if (path[path_index] == '\0') {
-        return 0;
+        file->filesystem = filesystem;
+        file->first_cluster = fat32->root_cluster;
+        file->size = 0;
+        file->position = 0;
+        file->directory_lba = 0;
+        file->directory_offset = 0;
+        file->is_directory = 1;
+        return 1;
     }
 
     while (1) {
@@ -2190,7 +2211,7 @@ int fat32_delete_directory(Filesystem* filesystem, const char* path) {
     FilesystemEntry entries[1];
     uint32_t entry_count = 0;
 
-    if (!fat32_read_directory(filesystem, directory.first_cluster, entries, 1, &entry_count)) {
+    if (!fat32_read_directory_at(filesystem, directory.first_cluster, 0, entries, 1, &entry_count)) {
         return 0;
     }
 

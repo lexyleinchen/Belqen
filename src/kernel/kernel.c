@@ -63,6 +63,10 @@ static void kernel_loop_thread(void* arg) {
                         }
                     }
 
+                    if (!vfs_delete_file("/fd-smoke-test.txt")) {
+                        kernel_log("Deleting file descriptor fixture failed.");
+                    }
+
                     kernel_log(descriptors_closed ? "File descriptor exit cleanup passed." : "File descriptor exit cleanup failed.");
                 }
 

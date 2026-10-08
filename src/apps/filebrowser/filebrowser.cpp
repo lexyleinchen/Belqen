@@ -26,7 +26,7 @@ namespace filebrowser {
 
         entry_count = 0;
 
-        if (!filesystem_read_directory(current_filesystem, cluster, entries, 64, &entry_count)) {
+        if (!filesystem_read_directory_at(current_filesystem, cluster, 0, entries, 64, &entry_count)) {
             kernel_log("filebrowser failed to read directory.");
             return;
         }

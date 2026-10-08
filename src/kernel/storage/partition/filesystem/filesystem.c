@@ -45,7 +45,7 @@ Filesystem* filesystem_get(uint32_t index) {
     return mounted_filesystems[index];
 }
 
-int filesystem_read_directory(Filesystem* filesystem, uint32_t cluster, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count) {
+int filesystem_read_directory_at(Filesystem* filesystem, uint32_t cluster, uint32_t start_index, FilesystemEntry* entries, uint32_t max_entries, uint32_t* entry_count) {
     if (!filesystem || !entries || !entry_count) {
         return 0;
     }
@@ -53,7 +53,7 @@ int filesystem_read_directory(Filesystem* filesystem, uint32_t cluster, Filesyst
     *entry_count = 0;
 
     if (filesystem->type == FILESYSTEM_FAT32) {
-        return fat32_read_directory(filesystem, cluster, entries, max_entries, entry_count);
+        return fat32_read_directory_at(filesystem, cluster, start_index, entries, max_entries, entry_count);
     }
 
     return 0;
