@@ -174,6 +174,10 @@ int filesystem_close(FilesystemFile* file) {
         return 0;
     }
 
+    if (file->filesystem && !block_cache_flush(0)) {
+        return 0;
+    }
+
     file->filesystem = 0;
     file->first_cluster = 0;
     file->size = 0;

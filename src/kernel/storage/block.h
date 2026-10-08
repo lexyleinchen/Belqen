@@ -37,6 +37,10 @@ struct BlockDevice {
     void* driver_data;
 };
 
+int block_cache_flush(BlockDevice* device);
+
+int block_cache_invalidate_device(BlockDevice* device);
+
 int block_read(BlockDevice* device, uint64_t lba, uint32_t count, void* buffer);
 
 int block_write(BlockDevice* device, uint64_t lba, uint32_t count, const void* buffer);

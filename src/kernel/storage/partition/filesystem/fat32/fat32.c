@@ -246,6 +246,12 @@ static int fat32_format_step(FAT32FormatWork* work) {
             return 0;
         }
 
+        if (!block_cache_flush(0)) {
+            kernel_log("Fat32 block cache flush failed.");
+            work->stage = 0xFFFFFFFF;
+            return 1;
+        }
+
         work->stage = 100;
         kernel_log("fat32 format complete.");
         return 1;
@@ -847,6 +853,11 @@ int fat32_format(BlockDevice* device) {
             kernel_log("failed to clear root directory.");
             return 0;
         }
+    }
+
+    if (!block_cache_flush(0)) {
+        kernel_log("Fat32 block cache flush failed.");
+        return 0;
     }
 
     kernel_log("fat32 format complete.");

@@ -26,6 +26,10 @@ void os_init(void) {
     graphics.pitch = framebuffer.pitch;
     graphics_init(graphics);
 
+    if (!graphics_load_wallpaper("/users/belqen/pictures/background.bmp")) {
+        kernel_log("Loading wallpaper failed, will use solid background");
+    }
+
     // OS initialization
     mouse_init(framebuffer.width, framebuffer.height);
     desktop_init();
@@ -36,7 +40,10 @@ void os_init(void) {
 
 extern "C"
 void os_draw(void) {
-    graphics_clear(0xFF377c82); // Clear the screen with a color (blue)
+    if (!graphics_draw_wallpaper()) {
+        graphics_clear(0xFF377c82); // Clear the screen with a color (blue)
+    }
+    
     desktop_update();
     ui_update_windows();
     desktop_draw();
