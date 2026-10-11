@@ -219,9 +219,13 @@ void kernel_main(uint32_t multiboot_address) {
     storage_init();
     ps2_init();
     os_init();
+    scheduler_pause();
     ring3_test();
     Process* kernel_process = process_create("kernel");
-    thread_create(kernel_process, "kernel_loop", (void*)kernel_loop_thread, 0, 1);
+    if (!kernel_process || !thread_create(kernel_process, "kernel_loop", (void*)kernel_loop_thread, 0, 1)) {
+        kernel_panic("failed to create kernel loop thread");
+    }
+    scheduler_resume();
 
     while (1) {
         __asm__ volatile ("hlt");

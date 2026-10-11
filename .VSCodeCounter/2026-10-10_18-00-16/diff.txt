@@ -1,0 +1,79 @@
+Date : 2026-10-10 18:00:16
+Directory : /mnt/HDD 500GB/Coding/Belqen
+Total : 35 files,  2209 codes, 40 comments, 843 blanks, all 3092 lines
+
+Languages
++-------------------------+------------+------------+------------+------------+------------+
+| language                | files      | code       | comment    | blank      | total      |
++-------------------------+------------+------------+------------+------------+------------+
+| C                       |          9 |      1,383 |          0 |        445 |      1,828 |
+| Markdown                |         11 |        507 |         40 |        294 |        841 |
+| C++                     |         12 |        185 |          0 |         76 |        261 |
+| x86 and x86_64 Assembly |          1 |        120 |          0 |         26 |        146 |
+| YAML                    |          1 |          8 |          0 |          0 |          8 |
+| Makefile                |          1 |          6 |          0 |          2 |          8 |
++-------------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                               | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                  |         35 |      2,209 |         40 |        843 |      3,092 |
+| . (Files)                                                                          |          5 |        276 |          0 |        159 |        435 |
+| .github                                                                            |          8 |        245 |         40 |        137 |        422 |
+| .github (Files)                                                                    |          1 |         52 |          7 |         27 |         86 |
+| .github/ISSUE_TEMPLATE                                                             |          7 |        193 |         33 |        110 |        336 |
+| src                                                                                |         22 |      1,688 |          0 |        547 |      2,235 |
+| src/kernel                                                                         |         18 |      1,571 |          0 |        512 |      2,083 |
+| src/kernel (Files)                                                                 |          1 |         67 |          0 |         18 |         85 |
+| src/kernel/core                                                                    |          7 |        286 |          0 |         84 |        370 |
+| src/kernel/storage                                                                 |         10 |      1,218 |          0 |        410 |      1,628 |
+| src/kernel/storage (Files)                                                         |          6 |        702 |          0 |        232 |        934 |
+| src/kernel/storage/partition                                                       |          4 |        516 |          0 |        178 |        694 |
+| src/kernel/storage/partition/filesystem                                            |          4 |        516 |          0 |        178 |        694 |
+| src/kernel/storage/partition/filesystem (Files)                                    |          2 |         50 |          0 |         18 |         68 |
+| src/kernel/storage/partition/filesystem/fat32                                      |          2 |        466 |          0 |        160 |        626 |
+| src/os                                                                             |          4 |        117 |          0 |         35 |        152 |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+
+| filename                                                                           | language                | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/bug_report.md                  | Markdown                |         34 |          6 |         20 |         60 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/build_toolchain.md             | Markdown                |         41 |          5 |         19 |         65 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/config.yml                     | YAML                    |          8 |          0 |          0 |          8 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/documentation.md               | Markdown                |         16 |          5 |         13 |         34 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/feature_request.md             | Markdown                |         19 |          7 |         17 |         43 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/hardware_support.md            | Markdown                |         37 |          4 |         20 |         61 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/performance.md                 | Markdown                |         38 |          6 |         21 |         65 |
+| /mnt/HDD 500GB/Coding/Belqen/.github/pull_request_template.md                      | Markdown                |         52 |          7 |         27 |         86 |
+| /mnt/HDD 500GB/Coding/Belqen/CODE_OF_CONDUCT.md                                    | Markdown                |         57 |          0 |         38 |         95 |
+| /mnt/HDD 500GB/Coding/Belqen/CONTRIBUTING.md                                       | Markdown                |         97 |          0 |         56 |        153 |
+| /mnt/HDD 500GB/Coding/Belqen/Makefile                                              | Makefile                |          6 |          0 |          2 |          8 |
+| /mnt/HDD 500GB/Coding/Belqen/README.md                                             | Markdown                |         12 |          0 |          5 |         17 |
+| /mnt/HDD 500GB/Coding/Belqen/SECURITY.md                                           | Markdown                |        104 |          0 |         58 |        162 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/fd_smoke_test.asm                     | x86 and x86_64 Assembly |        120 |          0 |         26 |        146 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.c                             | C                       |         63 |          0 |         19 |         82 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.h                             | C++                     |         13 |          0 |          7 |         20 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.c                           | C                       |         18 |          0 |          4 |         22 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.h                           | C++                     |          2 |          0 |          2 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/syscall.c                             | C                       |         66 |          0 |         26 |         92 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/core/syscall.h                             | C++                     |          4 |          0 |          0 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/kernel.c                                   | C                       |         67 |          0 |         18 |         85 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.c                            | C                       |        148 |          0 |         42 |        190 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.h                            | C++                     |          2 |          0 |          2 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.c | C                       |        464 |          0 |        158 |        622 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.h | C++                     |          2 |          0 |          2 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.c  | C                       |         48 |          0 |         16 |         64 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.h  | C++                     |          2 |          0 |          2 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.c                          | C                       |        123 |          0 |         35 |        158 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.h                          | C++                     |          1 |          0 |          1 |          2 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/vfs.c                              | C                       |        386 |          0 |        127 |        513 |
+| /mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/vfs.h                              | C++                     |         42 |          0 |         25 |         67 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/graphics.cpp                                   | C++                     |         91 |          0 |         26 |        117 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/graphics.h                                     | C++                     |          2 |          0 |          2 |          4 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os.cpp                                         | C++                     |          5 |          0 |          2 |          7 |
+| /mnt/HDD 500GB/Coding/Belqen/src/os/os_syscall.h                                   | C++                     |         19 |          0 |          5 |         24 |
+| Total                                                                              |                         |      2,209 |         40 |        843 |      3,092 |
++------------------------------------------------------------------------------------+-------------------------+------------+------------+------------+------------+

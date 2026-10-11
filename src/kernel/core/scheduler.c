@@ -3,6 +3,7 @@
 #include "../memory/address_space.h"
 
 Scheduler g_scheduler;
+static volatile uint8_t scheduler_paused;
 
 uint64_t irq_save(void) {
     uint64_t flags;
@@ -14,6 +15,18 @@ void irq_restore(uint64_t flags) {
     if (flags & (1ULL << 9)) {
         __asm__ volatile ("sti" : : : "memory");
     }
+}
+
+void scheduler_pause(void) {
+    uint64_t flags = irq_save();
+    scheduler_paused = 1;
+    irq_restore(flags);
+}
+
+void scheduler_resume(void) {
+    uint64_t flags = irq_save();
+    scheduler_paused = 0;
+    irq_restore(flags);
 }
 
 void scheduler_enqueue_sleep(Thread* thread) {
@@ -69,6 +82,7 @@ void scheduler_init(void) {
     g_scheduler.tick = 0;
     g_scheduler.quantum_ms = 10;
     g_scheduler.quantum_ticks = 1;
+    scheduler_paused = 0;
 }
 
 void scheduler_enqueue(Thread* thread) {
@@ -112,6 +126,10 @@ Thread* scheduler_dequeue(void) {
 }
 
 Thread* scheduler_pick_next(void) {
+    if (scheduler_paused) {
+        return 0;
+    }
+
     Thread* next = scheduler_dequeue();
 
     if (!next) {
@@ -170,6 +188,10 @@ void scheduler_tick(void) {
     g_scheduler.tick++;
     scheduler_wakeup_sleeping();
     Thread* current = g_current_thread;
+
+    if (scheduler_paused) {
+        return;
+    }
 
     if (!current) {
         return;

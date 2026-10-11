@@ -115,29 +115,11 @@ bool graphics_load_wallpaper(const char* path) {
         return false;
     }
 
-    uint32_t total_bytes_read = 0;
-    int read_ok = true;
-
-    while (total_bytes_read < file_size) {
-        uint32_t chunk_size = (uint32_t)(file_size - total_bytes_read);
-
-        if (chunk_size > 4096) {
-            chunk_size = 4096;
-        }
-
-        uint32_t chunk_bytes_read = 0;
-
-        if (!vfs_read(&file, data + total_bytes_read, chunk_size, &chunk_bytes_read) || chunk_bytes_read != chunk_size) {
-            read_ok = false;
-            break;
-        }
-
-        total_bytes_read += chunk_bytes_read;
-    }
-
+    uint32_t bytes_read = 0;
+    int read_ok = vfs_read(&file, data, (uint32_t)file_size, &bytes_read);
     vfs_close(&file);
 
-    if (!read_ok || total_bytes_read != file_size) {
+    if (!read_ok || bytes_read != file_size) {
         free(data);
         return false;
     }

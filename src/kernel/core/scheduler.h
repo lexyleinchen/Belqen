@@ -25,6 +25,10 @@ void irq_restore(uint64_t flags);
 
 void scheduler_init(void);
 
+void scheduler_pause(void);
+
+void scheduler_resume(void);
+
 void scheduler_enqueue(Thread* thread);
 
 void scheduler_enqueue_sleep(Thread* thread);

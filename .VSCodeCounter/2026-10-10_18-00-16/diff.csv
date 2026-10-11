@@ -1,0 +1,37 @@
+"filename", "language", "C++", "C", "Makefile", "Markdown", "YAML", "x86 and x86_64 Assembly", "comment", "blank", "total"
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/bug_report.md", "Markdown", 0, 0, 0, 34, 0, 0, 6, 20, 60
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/build_toolchain.md", "Markdown", 0, 0, 0, 41, 0, 0, 5, 19, 65
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/config.yml", "YAML", 0, 0, 0, 0, 8, 0, 0, 0, 8
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/documentation.md", "Markdown", 0, 0, 0, 16, 0, 0, 5, 13, 34
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/feature_request.md", "Markdown", 0, 0, 0, 19, 0, 0, 7, 17, 43
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/hardware_support.md", "Markdown", 0, 0, 0, 37, 0, 0, 4, 20, 61
+"/mnt/HDD 500GB/Coding/Belqen/.github/ISSUE_TEMPLATE/performance.md", "Markdown", 0, 0, 0, 38, 0, 0, 6, 21, 65
+"/mnt/HDD 500GB/Coding/Belqen/.github/pull_request_template.md", "Markdown", 0, 0, 0, 52, 0, 0, 7, 27, 86
+"/mnt/HDD 500GB/Coding/Belqen/CODE_OF_CONDUCT.md", "Markdown", 0, 0, 0, 57, 0, 0, 0, 38, 95
+"/mnt/HDD 500GB/Coding/Belqen/CONTRIBUTING.md", "Markdown", 0, 0, 0, 97, 0, 0, 0, 56, 153
+"/mnt/HDD 500GB/Coding/Belqen/Makefile", "Makefile", 0, 0, 6, 0, 0, 0, 0, 2, 8
+"/mnt/HDD 500GB/Coding/Belqen/README.md", "Markdown", 0, 0, 0, 12, 0, 0, 0, 5, 17
+"/mnt/HDD 500GB/Coding/Belqen/SECURITY.md", "Markdown", 0, 0, 0, 104, 0, 0, 0, 58, 162
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/fd_smoke_test.asm", "x86 and x86_64 Assembly", 0, 0, 0, 0, 0, 120, 0, 26, 146
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.c", "C", 0, 63, 0, 0, 0, 0, 0, 19, 82
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/process.h", "C++", 13, 0, 0, 0, 0, 0, 0, 7, 20
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.c", "C", 0, 18, 0, 0, 0, 0, 0, 4, 22
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/scheduler.h", "C++", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/syscall.c", "C", 0, 66, 0, 0, 0, 0, 0, 26, 92
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/core/syscall.h", "C++", 4, 0, 0, 0, 0, 0, 0, 0, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/kernel.c", "C", 0, 67, 0, 0, 0, 0, 0, 18, 85
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.c", "C", 0, 148, 0, 0, 0, 0, 0, 42, 190
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/block.h", "C++", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.c", "C", 0, 464, 0, 0, 0, 0, 0, 158, 622
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/fat32/fat32.h", "C++", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.c", "C", 0, 48, 0, 0, 0, 0, 0, 16, 64
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/partition/filesystem/filesystem.h", "C++", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.c", "C", 0, 123, 0, 0, 0, 0, 0, 35, 158
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/storage.h", "C++", 1, 0, 0, 0, 0, 0, 0, 1, 2
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/vfs.c", "C", 0, 386, 0, 0, 0, 0, 0, 127, 513
+"/mnt/HDD 500GB/Coding/Belqen/src/kernel/storage/vfs.h", "C++", 42, 0, 0, 0, 0, 0, 0, 25, 67
+"/mnt/HDD 500GB/Coding/Belqen/src/os/graphics.cpp", "C++", 91, 0, 0, 0, 0, 0, 0, 26, 117
+"/mnt/HDD 500GB/Coding/Belqen/src/os/graphics.h", "C++", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"/mnt/HDD 500GB/Coding/Belqen/src/os/os.cpp", "C++", 5, 0, 0, 0, 0, 0, 0, 2, 7
+"/mnt/HDD 500GB/Coding/Belqen/src/os/os_syscall.h", "C++", 19, 0, 0, 0, 0, 0, 0, 5, 24
+"Total", "-", 185, 1383, 6, 507, 8, 120, 40, 843, 3092

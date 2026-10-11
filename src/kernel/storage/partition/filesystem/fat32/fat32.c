@@ -1639,14 +1639,14 @@ int fat32_read_file(FilesystemFile* file, void* buffer, uint32_t size, uint32_t*
     uint64_t cluster_offset = file->position % cluster_size;
     uint32_t cluster = file->first_cluster;
 
-    if (cluster < 2) {
+    if (cluster < 2 || (uint64_t)cluster >= (uint64_t)fat32->cluster_count + 2) {
         return 0;
     }
 
-    for (uint64_t i = 0; i <cluster_index; i++) {
+    for (uint64_t i = 0; i < cluster_index; i++) {
         cluster = fat32_get_next_cluster(file->filesystem, cluster);
 
-        if (cluster < 2 || cluster >= 0x0FFFFFF8) {
+        if (cluster < 2 || cluster >= 0x0FFFFFF8 || (uint64_t)cluster >= (uint64_t)fat32->cluster_count + 2) {
             return 0;
         }
     }
@@ -1654,25 +1654,27 @@ int fat32_read_file(FilesystemFile* file, void* buffer, uint32_t size, uint32_t*
     uint8_t sector[512];
 
     while (*bytes_read < size) {
+        if (cluster_offset >= cluster_size) {
+            cluster = fat32_get_next_cluster(file->filesystem, cluster);
+
+            if (cluster < 2 || cluster >= 0x0FFFFFF8 || (uint64_t)cluster >= (uint64_t)fat32->cluster_count + 2) {
+                return 0;
+            }
+
+            cluster_offset = 0;
+        }
+
         uint32_t cluster_lba = fat32_cluster_to_lba(fat32, cluster);
 
         if (!cluster_lba) {
             return 0;
         }
 
-        uint64_t absolute_offset = cluster_offset + *bytes_read;
-        uint32_t sector_index = (uint32_t)(absolute_offset / fat32->bytes_per_sector);
-        uint32_t sector_offset = (uint32_t)(absolute_offset % fat32->bytes_per_sector);
+        uint32_t sector_index = (uint32_t)(cluster_offset / fat32->bytes_per_sector);
+        uint32_t sector_offset = (uint32_t)(cluster_offset % fat32->bytes_per_sector);
 
         if (sector_index >= fat32->sectors_per_cluster) {
-            cluster = fat32_get_next_cluster(file->filesystem, cluster);
-
-            if (cluster < 2 || cluster >= 0x0FFFFFF8) {
-                return 0;
-            }
-
-            cluster_offset = 0;
-            continue;
+            return 0;
         }
 
         if (!block_read(file->filesystem->device, cluster_lba + sector_index, 1, sector)) {
@@ -1681,9 +1683,14 @@ int fat32_read_file(FilesystemFile* file, void* buffer, uint32_t size, uint32_t*
 
         uint32_t available = fat32->bytes_per_sector - sector_offset;
         uint32_t wanted = size - *bytes_read;
+        uint64_t cluster_remaining = cluster_size - cluster_offset;
 
         if (available > wanted) {
             available = wanted;
+        }
+
+        if (available > cluster_remaining) {
+            available = (uint32_t)cluster_remaining;
         }
 
         for (uint32_t i = 0; i < available; i++) {
@@ -1691,6 +1698,7 @@ int fat32_read_file(FilesystemFile* file, void* buffer, uint32_t size, uint32_t*
         }
 
         *bytes_read += available;
+        cluster_offset += available;
     }
 
     file->position += *bytes_read;
